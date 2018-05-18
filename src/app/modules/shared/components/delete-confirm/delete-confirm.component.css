@@ -1,0 +1,12 @@
+mat-dialog-actions {
+    display: flex;
+    justify-content: center;
+}
+
+h4 {
+    color: #000;
+}
+.mat-dialog-content{
+    height: 6vh;
+    color: #888886;
+}

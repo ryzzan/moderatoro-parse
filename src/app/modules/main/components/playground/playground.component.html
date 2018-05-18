@@ -1,0 +1,22 @@
+<mat-card class="container">
+  <form #playgroundFormDirective="ngForm" [formGroup]="playgroundForm" (ngSubmit)="onPlaygroundFormSubmit()">
+    <mat-card-title>IMC</mat-card-title>
+    <div class="flex">
+      <mat-form-field appearance="outline">
+        <mat-label>Peso</mat-label>
+        <mat-icon matPrefix>outlined_flag</mat-icon>
+        <input matInput formControlName="weight" placeholder="Digite seu peso" required>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Altura</mat-label>
+        <mat-icon matPrefix>outlined_flag</mat-icon>
+        <input matInput formControlName="height" placeholder="Digite sua altura" required>
+      </mat-form-field>
+    </div>
+    <mat-divider [inset]="true"></mat-divider>
+
+    <button mat-raised-button color="primary" [disabled]="playgroundForm.invalid">Calcula</button>
+    <button mat-raised-button color="primary" (click)="clearForm(playgroundFormDirective)">Limpar</button>
+  </form>
+</mat-card>

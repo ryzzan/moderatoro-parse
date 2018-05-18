@@ -1,0 +1,53 @@
+<div class="general-container" [class.is-mobile]="mobileQuery.matches">
+  <mat-toolbar class="header-toolbar">
+    <div id="header-content">
+      <div>
+        <button mat-icon-button (click)="snav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <h1 class="app-name">QuickStart</h1>
+      </div>
+
+      <div>
+        <button mat-icon-button (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+    <mat-sidenav #snav [opened]="options.opened" [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="options.fixed"
+      [fixedTopGap]="options.top" [fixedBottomGap]="options.bottom">
+      <mat-nav-list>
+        <mat-card *ngIf="options.userCard">
+          {{user?.name}}
+          <div>
+            <a routerLink="/user">
+              <mat-icon mat-list-icon>person</mat-icon>
+            </a>
+            <a routerLink="/settings">
+              <mat-icon>settings</mat-icon>
+            </a>
+            <a href="https://www.google.com/">
+              <mat-icon>help</mat-icon>
+            </a>
+            <a class="pointer" (click)="logout()">
+              <mat-icon>settings_power</mat-icon>
+            </a>
+          </div>
+        </mat-card>
+        <ng-template ngFor let-view [ngForOf]="views" let-even="even" let-odd="odd" let-rowIndex="index">
+          <a mat-list-item [routerLink]="view.link" routerLinkActive="active-link" (click)="mobile ? snav.close() : {}">
+            <mat-icon mat-list-icon>{{view.icon}}</mat-icon>
+            <span mat-line>{{view.name}}</span>
+            <span mat-line class="secondary">{{view.description}}</span>
+          </a>
+        </ng-template>
+      </mat-nav-list>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <router-outlet></router-outlet>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

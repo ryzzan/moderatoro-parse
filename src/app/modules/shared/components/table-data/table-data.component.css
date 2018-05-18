@@ -1,0 +1,189 @@
+mat-card {
+    margin: 0;
+    padding: 0;
+}
+
+.toolbar-icon {
+    color: #4FC3F7;
+    line-height: 35px;
+}
+
+#toolbar-action  /deep/ .mat-select-arrow {
+    color: #ffeb3b;
+}
+
+#toolbar-action /deep/ .mat-form-field-label{
+    color: rgba(255, 255, 255, 1);
+}
+
+#toolbar-action /deep/ .mat-form-field-underline{
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/deep/ .mat-checkbox-inner-container {
+  background: #fff;
+  border-radius: 3px; 
+}
+
+a {
+    cursor: pointer;
+}
+
+.div-inline {
+    display: inline;
+} 
+
+table {
+    width: 100%;
+}
+
+td {
+    border-top: 1px #EEEEEE solid;
+    padding: 15px;
+}
+
+th mat-icon {
+    color: #BDBDBD;
+}
+
+th a mat-icon {
+    vertical-align: middle;
+}
+
+div a mat-icon {
+    vertical-align: middle;
+}
+
+div span{
+    vertical-align: middle;
+}
+
+th {
+    border: none;
+    color: #BDBDBD;
+    padding: 15px;
+}
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.div-foot-pattern {
+    background-color: transparent;
+    font-size: 14px; 
+    vertical-align: middle;
+    padding: 10px 0 10px 0; 
+}
+
+.text-fix{
+    font-size: 16px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.dropdown-table-pattern{
+    height: 698;
+    width: 320;
+}
+
+.search-pattern{
+    padding-top: 3px;
+    font-size: 17px;
+    font-weight: normal;
+}
+.font-pattern{
+    text-align: left;
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.list-item:hover {
+    background: #EEEEEE;
+}
+
+.list-item span {
+    margin-right: 15px;
+}
+
+.list-item-actions {
+    right: 0;
+    text-align: right;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+#footer-toolbar {
+    width: 100%;
+}
+
+#list-controllers {
+    font-size: 16px;
+    width: 100%;
+}
+
+#list-controllers mat-icon {
+    font-size: 16px;
+}
+
+#list-item-checkbox {
+    left: 0;
+    text-align: left;
+    width: 10px;
+}
+
+#page-area {
+    float: left;
+    padding-left: 40%;
+    width: 50%;
+}
+
+#row-area {
+    float: left;
+    /*margin-left: -10px;*/
+    width: 50%;
+    height: 64px;
+}
+
+#toolbar-action {
+    font-size: 20px;
+    font-weight: bolder;
+    right: 0;
+    margin: 0;
+    text-align: right;
+    width: 100%;
+}
+
+#toolbar-spacer {
+    font-size: 20px;
+    font-weight: bolder;
+    left: 0;
+    margin: 0;
+    width: 10%;
+}
+
+#toolbar-title {
+    color: white;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: bolder;
+    left: 0;
+    margin: 0;
+    margin-left: 30px;
+    width: 25%;
+}
+
+@media only screen and (max-device-width: 320px) {
+    #toolbar-action {
+        font-size: 20px;
+        font-weight: bolder;
+        right: 0;
+        margin-right: 0;
+        width: 65%;
+    }
+}

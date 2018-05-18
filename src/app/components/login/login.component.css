@@ -1,0 +1,19 @@
+mat-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 22em;
+    height: 37.5%;
+    z-index: 1;
+}
+
+#background {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#background mat-form-field {
+    display: block;
+}

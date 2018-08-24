@@ -17,8 +17,8 @@ import { MaterialModule } from './material.module';
 /**
  * Services
  */
-import { AuthenticationService } from './services/loopback/authentication.service';
-import { CrudService } from './services/loopback/crud.service';
+import { AuthenticationService } from './services/parse/authentication.service';
+import { CrudService } from './services/parse/crud.service';
 import { DeleteConfirmComponent } from './components/delete-confirm/delete-confirm.component';
 
 @NgModule({

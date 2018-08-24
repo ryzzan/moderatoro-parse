@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { CrudService } from '../../../shared/services/loopback/crud.service';
+import { CrudService } from '../../../shared/services/parse/crud.service';
 
 @Component({
   selector: 'app-rule',
@@ -19,10 +19,10 @@ export class RuleComponent implements OnInit {
   }
 
   onSubmitRule = () => {
-    this._crud.create({
-      route: 'Rules',
-      objectToCreate: this.ruleForm.value
-    })
+    // this._crud.create({
+    //   route: 'Rules',
+    //   objectToCreate: this.ruleForm.value
+    // })
   }
 
 }

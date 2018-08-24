@@ -4,8 +4,8 @@ import { FormGroup, FormControl, FormGroupDirective } from '@angular/forms';
 /**
  * Services
  */
-import { AuthenticationService } from './../../../shared/services/loopback/authentication.service';
-import { CrudService } from './../../../shared/services/loopback/crud.service';
+import { AuthenticationService } from './../../../shared/services/parse/authentication.service';
+import { CrudService } from './../../../shared/services/parse/crud.service';
 
 @Component({
   selector: 'app-playground',

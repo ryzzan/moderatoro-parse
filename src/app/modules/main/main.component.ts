@@ -10,7 +10,7 @@ import {
 /**
  * Services
  */
-import { AuthenticationService } from './../shared/services/loopback/authentication.service';
+import { AuthenticationService } from './../shared/services/parse/authentication.service';
 
 @Component({
   selector: 'app-main',

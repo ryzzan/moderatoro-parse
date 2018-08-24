@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 /**
  * Services
  */
-import { AuthenticationService } from './../services/loopback/authentication.service';
+import { AuthenticationService } from './../services/parse/authentication.service';
 import { MatSnackBar } from '@angular/material';
 
 /**
@@ -29,19 +29,19 @@ export class AuthGuard implements CanActivate {
     RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean
   {
-    this._auth.setUser()
-    .catch(error => {
-      this._router.navigate(['/login']);
-    })
-    .then(res => { console.log(res)
-      if(!res['id']) {
-        this._router.navigate(['/login']);
-      }
-    }).catch( rej => {
-      this._snackbar.open('Você precisa estar logado para acessar essa área','',{
-        duration: 4000
-      })
-    });
+    // this._auth.setUser()
+    // .catch(error => {
+    //   this._router.navigate(['/login']);
+    // })
+    // .then(res => { console.log(res)
+    //   if(!res['id']) {
+    //     this._router.navigate(['/login']);
+    //   }
+    // }).catch( rej => {
+    //   this._snackbar.open('Você precisa estar logado para acessar essa área','',{
+    //     duration: 4000
+    //   })
+    // });
 
     return true;
   }

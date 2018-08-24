@@ -55,7 +55,7 @@ import {
  */
 import {
   CrudService
-} from './../../services/loopback/crud.service';
+} from './../../services/parse/crud.service';
 
 @Component({
   selector: 'ntm-table-data',

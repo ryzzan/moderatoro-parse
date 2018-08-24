@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material';
 /**
  * Services
  */
-import { AuthenticationService } from './../../modules/shared/services/loopback/authentication.service';
+import { AuthenticationService } from './../../modules/shared/services/parse/authentication.service';
 
 
 @Component({

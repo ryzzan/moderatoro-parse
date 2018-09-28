@@ -1,22 +1,24 @@
-<mat-card class="container">
+<!-- <mat-card class="container">
   <form #playgroundFormDirective="ngForm" [formGroup]="playgroundForm" (ngSubmit)="onPlaygroundFormSubmit()">
-    <mat-card-title>IMC</mat-card-title>
-    <div class="flex">
-      <mat-form-field appearance="outline">
-        <mat-label>Peso</mat-label>
-        <mat-icon matPrefix>outlined_flag</mat-icon>
-        <input matInput formControlName="weight" placeholder="Digite seu peso" required>
-      </mat-form-field>
+    <mat-card-header>
+      <mat-card-title>Meu componente</mat-card-title>
+    </mat-card-header>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Altura</mat-label>
-        <mat-icon matPrefix>outlined_flag</mat-icon>
-        <input matInput formControlName="height" placeholder="Digite sua altura" required>
-      </mat-form-field>
-    </div>
-    <mat-divider [inset]="true"></mat-divider>
+    <mat-card-content>
+      <div class="flex">
+        <mat-form-field>
+          <mat-icon matPrefix>insert_drive_file</mat-icon>
+          <input matInput formControlName="fileName" placeholder="Nome dado ao arquivo" required>
+          <mat-error *ngIf="playgroundForm.get('fileName').errors && playgroundForm.get('fileName').touched">{{playgroundForm.get('fileName').errors.message}}</mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
 
-    <button mat-raised-button color="primary" [disabled]="playgroundForm.invalid">Calcula</button>
-    <button mat-raised-button color="primary" (click)="clearForm(playgroundFormDirective)">Limpar</button>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" [disabled]="playgroundForm.invalid">Calcula</button>
+        <button mat-raised-button color="primary" (click)="clearForm(playgroundFormDirective)">Limpar</button>
+    </mat-card-actions>
   </form>
-</mat-card>
+</mat-card> -->
+
+<moderatoro-table-data></moderatoro-table-data>

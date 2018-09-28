@@ -1,6 +1,44 @@
-import {
-  DeleteConfirmComponent
-} from './../delete-confirm/delete-confirm.component';
+/**
+ * Deals with a list component.
+ * @param {Object} params
+ * @param {Object} params.toolbar
+ * @param {string} params.toolbar.title - gives a title to toolbar 
+ * @param {Object} params.toolbar.delete - ignites delete area on toolbar, list and its methods
+ * @param {string} params.toolbar.delete.routeAfterDelete
+ * @param {string} params.toolbar.delete.routeToApi
+ * @param {string} params.toolbar.delete.fieldToDelete
+ * @param {string} params.toolbar.delete.message
+ * @param {string} params.toolbar.delete.exception[]
+ * @param {Object} params.toolbar.search - ignites search area on toolbar and its methods
+ * @param {string} params.toolbar.search.type - advanced or default (not necessary to explicit)
+ * @param {string} params.toolbar.search.fields[] - if type advanced
+ * @param {Object} params.toolbar.actionButton
+ * @param {string} params.toolbar.actionButton.permissions
+ * @param {string} params.toolbar.actionButton.type
+ * @param {string} params.toolbar.actionButton.value
+ * @param {string} params.toolbar.actionButton.color
+ * @param {Object} params.list
+ * @param {Object[]} params.list.columns
+ * @param {string} params.list.columns.columnDef
+ * @param {string} params.list.columns.header
+ * @param {any} params.list.columns.cell - (row: User) => `${row.uf == null ? '' : row.uf}`
+ * @param {Array} params.list.show
+ * @param {Array} params.list.header
+ * @param {Array} params.list.order
+ * @param {Object} params.list.edit
+ * @param {string} params.list.edit.route
+ * @param {string} params.list.edit.param
+ * @param {number} params.list.page
+ * @param {Object[]} params.list.changeValue
+ * @param {string} params.list.changeValue.field
+ * @param {string} params.list.changeValue.fieldValue
+ * @param {string} params.list.changeValue.newValue
+ * @param {Object[]} params.list.changeValueReadingDB
+ * @param {string} params.list.changeValueReadingDB.collecimport { read } from 'fs';
+tion
+ * @param {string} params.list.changeValueReadingDB.field
+ * @param {Object} params.list.actionButton
+ */
 import {
   Component,
   OnInit,
@@ -9,6 +47,9 @@ import {
   Output,
   EventEmitter
 } from '@angular/core';
+import {
+  DeleteConfirmComponent
+} from './../delete-confirm/delete-confirm.component';
 import {
   FormGroup,
   FormControl,
@@ -23,34 +64,6 @@ import {
 } from '@angular/router';
 
 /**
- * Deals with a list component.
- * @param {Object} params
- * @param {Object} params.toolbar
- * @param {string} params.toolbar.title - gives a title to toolbar 
- * @param {Object[]} params.toolbar.delete - ignites delete area on toolbar, list and its methods
- * @param {string} params.toolbar.delete[].route - route to access after deleting
- * @param {string} params.toolbar.delete[].param - field to use as param to deletion and ignite its methods
- * @param {boolean} params.toolbar.search - ignites search area on toolbar and its methods
- * @param {Object} params.list
- * @param {string} params.list.route
- * @param {Array} params.list.show
- * @param {Array} params.list.header
- * @param {Array} params.list.order
- * @param {Object} params.list.edit
- * @param {string} params.list.edit.route
- * @param {string} params.list.edit.param
- * @param {number} params.list.page
- * @param {Object[]} params.list.changeValue
- * @param {string} params.list.changeValue.field
- * @param {string} params.list.changeValue.fieldValue
- * @param {string} params.list.changeValue.newValue
- * @param {Object[]} params.list.changeValueReadingDB
- * @param {string} params.list.changeValueReadingDB.collection
- * @param {string} params.list.changeValueReadingDB.field
- * @param {Object} params.list.actionButton
- */
-
-/**
  * Services
  */
 import {
@@ -58,19 +71,52 @@ import {
 } from './../../services/parse/crud.service';
 
 @Component({
-  selector: 'ntm-table-data',
+  selector: 'moderatoro-table-data',
   templateUrl: './table-data.component.html',
   styleUrls: ['./table-data.component.css']
 })
 export class TableDataComponent implements OnInit, OnChanges {
-  constructor() {
+  params: any;
+  title: string;
+  toolbarEdit: boolean;
+  toolbarDelete: boolean;
+
+  constructor(
+    private _crud: CrudService
+  ) {
   }
 
   ngOnChanges() {
-    
+    this._crud.read(this.params);
   }
 
   ngOnInit() {
-    
-  } 
+    (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
+    (this.params.toolbar && this.params.toolbar.edit) ? this.toolbarEdit = this.params.toolbar.edit : this.toolbarEdit = false;
+    (this.params.toolbar && this.params.toolbar.delete) ? this.toolbarDelete = this.params.toolbar.delete : this.toolbarDelete = false;
+  }
+
+  setToolbarEdit = () => {
+  }
+
+  setToolbarDelete = () => {
+  }
+
+  setToolbarActionButton = () => {
+  }
+
+  setListHeader = () => {
+  }
+
+  setListContent = () => {
+  }
+
+  setListEdit = () => {
+  }
+
+  setListDelete = () => {
+  }
+
+  setListActionButton = () => {
+  }
 }

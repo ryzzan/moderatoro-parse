@@ -7,6 +7,11 @@ import { FormGroup, FormControl, FormGroupDirective } from '@angular/forms';
 import { AuthenticationService } from './../../../shared/services/parse/authentication.service';
 import { CrudService } from './../../../shared/services/parse/crud.service';
 
+/**
+ * Validators
+ */
+import { ValidateRequired } from './../../../shared/validators/required.validator';
+
 @Component({
   selector: 'app-playground',
   templateUrl: './playground.component.html',
@@ -23,14 +28,11 @@ export class PlaygroundComponent implements OnInit {
 
   ngOnInit() {
     this.playgroundForm = new FormGroup({
-      'weight': new FormControl(null),
-      'height': new FormControl(null),
-      'age': new FormControl(null),
-      'biologicalSex': new FormControl(null)
-    })
+      'fileName': new FormControl(null, ValidateRequired)
+    });
   }
 
-  clearForm = (playgroundFormDirective: FormGroupDirective) => {    
+  clearForm = (playgroundFormDirective: FormGroupDirective) => {
     playgroundFormDirective.reset();
     playgroundFormDirective.resetForm();
   }

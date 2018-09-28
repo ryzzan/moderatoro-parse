@@ -32,12 +32,11 @@ export class MainComponent implements OnInit {
     name: 'Regras',
     icon: 'account_circle',
     link: ['rule']
-  }/*, {
+  }, {
     name: 'Playground',
-    icon: 'account_circle',
+    icon: 'toys',
     link: 'playground'
-  }*/
-  ];
+  }];
 
   constructor(
     private _auth: AuthenticationService,

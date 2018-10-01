@@ -51,7 +51,20 @@ export class CrudService {
     paramToDelete = params.paramToDelete;
   })
 
-  read = (params) => new Promise((res, rej) => {
-    console.log('Read rolando');
+  readFromRoute = (params) => new Promise((res, rej) => {
+    let route, message;
+    params.message ? message = params.message : message = 'Sucesso';
+    route = params.list.route; console.log(params);
+
+    new Parse.Query(new Parse.Object(route)).find()
+    .then(response => {
+      res({
+        message: message,
+        response: response
+      });
+    });
+  })
+
+  readFromObject = (params) => new Promise((res, rej) => {
   })
 }

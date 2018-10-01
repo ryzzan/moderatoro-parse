@@ -13,7 +13,7 @@ export function ValidateUniqueValue(valueToIgnoreIfUpdate: string, collectionAnd
         clearTimeout(response);
 
         response = setTimeout(() => {
-            _crud.read({
+            _crud.readFromRoute({
                 route: collectionAndField[0],
                 where: [{
                     field: collectionAndField[1],

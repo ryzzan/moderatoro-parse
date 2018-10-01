@@ -2,7 +2,7 @@
  * Deals with a list component.
  * @param {Object} params
  * @param {Object} params.toolbar
- * @param {string} params.toolbar.title - gives a title to toolbar 
+ * @param {string} params.toolbar.title - gives a title to toolbar
  * @param {Object} params.toolbar.delete - ignites delete area on toolbar, list and its methods
  * @param {string} params.toolbar.delete.routeAfterDelete
  * @param {string} params.toolbar.delete.routeToApi
@@ -71,14 +71,16 @@ import {
 } from './../../services/parse/crud.service';
 
 @Component({
-  selector: 'moderatoro-table-data',
+  selector: 'app-table-data',
   templateUrl: './table-data.component.html',
   styleUrls: ['./table-data.component.css']
 })
 export class TableDataComponent implements OnInit, OnChanges {
-  params: any;
+  @Input() params: any;
+
+  listEdit: boolean;
   title: string;
-  toolbarEdit: boolean;
+  toolbarActionButton: boolean;
   toolbarDelete: boolean;
 
   constructor(
@@ -87,22 +89,24 @@ export class TableDataComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this._crud.read(this.params);
+    this._crud.readFromRoute(this.params);
   }
 
   ngOnInit() {
-    (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
-    (this.params.toolbar && this.params.toolbar.edit) ? this.toolbarEdit = this.params.toolbar.edit : this.toolbarEdit = false;
-    (this.params.toolbar && this.params.toolbar.delete) ? this.toolbarDelete = this.params.toolbar.delete : this.toolbarDelete = false;
-  }
-
-  setToolbarEdit = () => {
+    this._crud.readFromRoute(this.params);
+    // this.params.list ? this.setListContent() : this.setErrors('params.list is required');
+    // (this.params.list && this.params.list.edit) ? this.setListEdit() : this.listEdit = false;
+    // (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
+    // (this.params.toolbar && this.params.toolbar.actionButton) ? this.setToolbarActionButton() : this.toolbarActionButton = false;
+    // (this.params.toolbar && this.params.toolbar.delete) ? this.setToolbarDelete() : this.toolbarDelete = false;
   }
 
   setToolbarDelete = () => {
+    this.toolbarDelete = true;
   }
 
   setToolbarActionButton = () => {
+    this.toolbarActionButton = true;
   }
 
   setListHeader = () => {
@@ -112,11 +116,13 @@ export class TableDataComponent implements OnInit, OnChanges {
   }
 
   setListEdit = () => {
-  }
-
-  setListDelete = () => {
+    this.listEdit = true;
   }
 
   setListActionButton = () => {
+  }
+
+  setErrors = (msg: string) => {
+    return msg;
   }
 }

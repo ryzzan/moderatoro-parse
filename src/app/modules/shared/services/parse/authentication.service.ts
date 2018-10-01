@@ -53,7 +53,7 @@ export class AuthenticationService {
       }
     }
     // Set params errors: end
-    if (params.loginMode === 'emailAndPassword') { console.log(params);
+    if (params.loginMode === 'emailAndPassword') {
       Parse.User.logIn(params.user, params.password)
       .catch(pErr => {
         if (pErr) {

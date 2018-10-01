@@ -18,46 +18,22 @@ import { ValidateRequired } from './../../../shared/validators/required.validato
   styleUrls: ['./playground.component.css']
 })
 export class PlaygroundComponent implements OnInit {
-  public paramsToTableData: any;
-  public playgroundForm: FormGroup;
-  public tableDataError: any;
+  public params: any;
   constructor(
     private _auth: AuthenticationService,
     private _crud: CrudService
   ) { }
 
   ngOnInit() {
-    this.playgroundForm = new FormGroup({
-      'fileName': new FormControl(null, ValidateRequired)
-    });
+    this.params = {
+      list: {
+        route: 'Form'
+      }
+    };
   }
 
   clearForm = (playgroundFormDirective: FormGroupDirective) => {
     playgroundFormDirective.reset();
     playgroundFormDirective.resetForm();
-  }
-
-  onPlaygroundFormSubmit = () => {
-    let imc = this.playgroundForm.value.weight / (this.playgroundForm.value.height*this.playgroundForm.value.height);
-    if(imc < 18.5) {
-      console.log("Você é quase uma ameba")
-    }
-    
-    if((imc > 18.5) && (imc < 24.9)) {
-      console.log("Você tá de boa")
-    }
-
-    if((imc > 24.9) && (imc < 29.9)) {
-      console.log("Gordinho gostoso")
-    }
-
-    if(imc > 30) {
-      console.log("Você é uma porca gorda")
-    }
-    // this._crud
-    // .create({
-    //   route: 'Companies',
-    //   objectToCreate: this.playgroundForm.value
-    // })
   }
 }

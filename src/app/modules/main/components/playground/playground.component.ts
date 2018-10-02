@@ -27,7 +27,11 @@ export class PlaygroundComponent implements OnInit {
   ngOnInit() {
     this.params = {
       list: {
-        route: 'Form'
+        route: 'Form',
+        columns: [{
+          collumnDef: 'type',
+          header: 'Tipo'
+        }]
       }
     };
   }

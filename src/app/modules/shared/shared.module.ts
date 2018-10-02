@@ -20,6 +20,7 @@ import { MaterialModule } from './material.module';
 import { AuthenticationService } from './services/parse/authentication.service';
 import { CrudService } from './services/parse/crud.service';
 import { DeleteConfirmComponent } from './components/delete-confirm/delete-confirm.component';
+import { TableDataComponent } from './components/table-data/table-data.component';
 
 @NgModule({
   imports: [
@@ -31,9 +32,11 @@ import { DeleteConfirmComponent } from './components/delete-confirm/delete-confi
     ComponentModule,
     MaterialModule,
     ReactiveFormsModule,
-    DeleteConfirmComponent
+    DeleteConfirmComponent,
+    TableDataComponent
   ], declarations: [
-    DeleteConfirmComponent
+    DeleteConfirmComponent,
+    TableDataComponent
   ], providers: [
     AuthenticationService,
     AuthGuard,

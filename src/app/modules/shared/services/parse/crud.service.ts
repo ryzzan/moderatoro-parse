@@ -54,7 +54,7 @@ export class CrudService {
   readFromRoute = (params) => new Promise((res, rej) => {
     let route, message;
     params.message ? message = params.message : message = 'Sucesso';
-    route = params.list.route; console.log(params);
+    route = params.route;
 
     new Parse.Query(new Parse.Object(route)).find()
     .then(response => {

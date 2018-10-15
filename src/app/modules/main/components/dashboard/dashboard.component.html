@@ -1,6 +1,3 @@
 <mat-card class="container">
-    <p>Welcome</p>
-    <div *ngFor="let test of ['teste', 'Te']">
-        {{test}}
-    </div>
+    <app-table-data [params]="paramsToTableData"></app-table-data>
 </mat-card>

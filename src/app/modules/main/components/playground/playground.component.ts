@@ -29,7 +29,7 @@ export class PlaygroundComponent implements OnInit {
       list: {
         route: 'Form',
         columns: [{
-          collumnDef: 'type',
+          columnDef: 'type',
           header: 'Tipo'
         }]
       }

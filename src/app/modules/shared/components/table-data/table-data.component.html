@@ -1,21 +1,41 @@
-<!-- <table>
+<table *ngIf="!isLoading" id="toolbar">
   <thead>
     <tr>
-      <th>
-        
+      <th id="title">
+        {{title}}
+      </th>
+    </tr>
+  </thead>  
+</table>
+
+<table *ngIf="!isLoading" id="content">
+  <thead>
+    <tr>
+      <th *ngFor="let header of headers;">
+        {{header}}
       </th>
     </tr>
   </thead>
 
   <tbody>
-    <tr>
-      <td>
-
+    <tr *ngFor="let column of columns;">
+      <td *ngFor="let attribute of params.list.columns; let i = index;">
+          {{column.attributes[attribute.columnDef]}}
       </td>
     </tr>
   </tbody>
 </table>
-{{collumns}} -->
-<p *ngFor="let collumn of collumns">
-    {{collumn}}
-</p>
+
+<table *ngIf="!isLoading" id="actionbar">
+  <thead>
+    <tr>
+      <th id="navigation">
+      </th>
+    </tr>
+  </thead>  
+</table>
+<!-- <div *ngFor="let column of columns;">
+  <div *ngFor="let attribute of params.list.columns; let i = index;">
+    {{column.attributes[attribute.columnDef]}}
+  </div>
+</div> -->

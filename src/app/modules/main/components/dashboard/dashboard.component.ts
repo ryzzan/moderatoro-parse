@@ -6,9 +6,25 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  paramsToTableData: any;
 
   constructor() { }
 
   ngOnInit() {
+    this.paramsToTableData = {
+      toolbar: {
+        title: 'Tabela teste'
+      },
+      list: {
+        route: 'Form',
+        columns: [{
+          columnDef: 'type',
+          header: 'Tipo'
+        }, {
+          columnDef: 'placeholder',
+          header: 'Título'
+        }]
+      }
+    };
   }
 }

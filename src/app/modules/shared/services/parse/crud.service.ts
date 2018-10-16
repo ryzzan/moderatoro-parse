@@ -67,4 +67,18 @@ export class CrudService {
 
   readFromObject = (params) => new Promise((res, rej) => {
   })
+
+  countFromRoute = (params) => new Promise((res, rej) => {
+    let route, message;
+    params.message ? message = params.message : message = 'Sucesso';
+    route = params.route;
+
+    new Parse.Query(new Parse.Object(route)).count()
+    .then(response => {
+      res({
+        message: message,
+        response: response
+      });
+    });
+  })
 }

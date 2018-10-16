@@ -1,5 +1,6 @@
 table {
     text-align: left;
+    width: 100%;
 }
 
 td, th {
@@ -8,4 +9,13 @@ td, th {
 
 #title {
     width: 50%;
+    background: red;
+}
+
+#toolbar-action-button {
+    background: green;
+}
+
+#toolbar-action-button div div {
+    float: right;
 }

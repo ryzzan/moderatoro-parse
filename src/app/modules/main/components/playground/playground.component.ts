@@ -1,43 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, FormGroupDirective } from '@angular/forms';
-
-/**
- * Services
- */
-import { AuthenticationService } from './../../../shared/services/parse/authentication.service';
-import { CrudService } from './../../../shared/services/parse/crud.service';
-
-/**
- * Validators
- */
-import { ValidateRequired } from './../../../shared/validators/required.validator';
 
 @Component({
-  selector: 'app-playground',
-  templateUrl: './playground.component.html',
-  styleUrls: ['./playground.component.css']
+    selector: 'app-playground',
+    templateUrl: './playground.component.html',
+    styleUrls: ['./playground.component.css']
 })
 export class PlaygroundComponent implements OnInit {
-  public params: any;
-  constructor(
-    private _auth: AuthenticationService,
-    private _crud: CrudService
-  ) { }
+    paramsToTableData: any;
+    constructor() { }
 
-  ngOnInit() {
-    this.params = {
-      list: {
-        route: 'Form',
-        columns: [{
-          columnDef: 'type',
-          header: 'Tipo'
-        }]
-      }
-    };
-  }
-
-  clearForm = (playgroundFormDirective: FormGroupDirective) => {
-    playgroundFormDirective.reset();
-    playgroundFormDirective.resetForm();
-  }
+    ngOnInit() {
+        this.paramsToTableData = {
+            toolbar: {
+                title: 'Tabela teste',
+                delete: {
+                    field: 'objectId',
+                    message: 'Uma mensagem qualquer caso não queira usar a padrão'
+                }
+            },
+            list: {
+                route: 'Form',
+                columns: [{
+                    attribute: 'type',
+                    header: 'Tipo'
+                }, {
+                    attribute: 'placeholder',
+                    header: 'Título'
+                }]
+            },
+            actionbar: {
+                quantity: 5
+            }
+        };
+    }
 }

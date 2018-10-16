@@ -15,14 +15,18 @@ import { Response } from 'selenium-webdriver/http';
 })
 export class TableDataComponent implements OnInit {
   @Input() params: any;
+  @Output() tableDataOutput = new EventEmitter();
 
+  actionbarQuantity: boolean;
   columns: any;
   headers: any;
   isLoading: boolean;
   listEdit: boolean;
+  qtSelected: number;
   title: string;
   toolbarActionButton: boolean;
   toolbarDelete: boolean;
+  total: number;
 
   constructor(
     private _crud: CrudService
@@ -34,10 +38,11 @@ export class TableDataComponent implements OnInit {
     this.isLoading = true;
 
     this.params.list ? this.setListContent() : this.setErrors('params.list is required');
-    (this.params.list && this.params.list.edit) ? this.setListEdit() : this.listEdit = false;
+    this.params.list.edit ? this.setListEdit() : this.listEdit = false;
     (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
     (this.params.toolbar && this.params.toolbar.actionButton) ? this.setToolbarActionButton() : this.toolbarActionButton = false;
-    // (this.params.toolbar && this.params.toolbar.delete) ? this.setToolbarDelete() : this.toolbarDelete = false;
+    (this.params.toolbar && this.params.toolbar.delete) ? this.setToolbarDelete() : this.toolbarDelete = false;
+    (this.params.actionbar && this.params.actionbar.quantity) ? this.setActionbarQuantity() : this.actionbarQuantity = false;
   }
 
   setToolbarDelete = () => {
@@ -65,6 +70,14 @@ export class TableDataComponent implements OnInit {
 
       this.isLoading = false;
     }
+
+    if (!this.total) {
+      this._crud.countFromRoute({
+        route: this.params.list.route
+      }).then(res => {
+        this.total = res['response'];
+      });
+    }
   }
 
   setListContentByParseRoute = () => {
@@ -89,7 +102,15 @@ export class TableDataComponent implements OnInit {
   setListActionButton = () => {
   }
 
+  setActionbarQuantity = () => {
+    this.qtSelected = this.params.actionbar.quantity;
+  }
+
   setErrors = (msg: string) => {
     return msg;
+  }
+
+  onClickToolbarActionButton = (trigger) => {
+    this.tableDataOutput.emit({trigger: trigger});
   }
 }

@@ -21,4 +21,6 @@
   </form>
 </mat-card> -->
 
-<app-table-data [params]="params"></app-table-data>
+<mat-card class="container">    
+  <app-table-data [params]="paramsToTableData" (tableDataOutput)="tableDataOutputReceiver($event)"></app-table-data>
+</mat-card>

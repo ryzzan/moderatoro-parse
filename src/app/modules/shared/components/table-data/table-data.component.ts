@@ -19,9 +19,13 @@ export class TableDataComponent implements OnInit {
 
   actionbarQuantity: boolean;
   columns: any;
+  currentPage: number;
+  deleteArray: any;
   headers: any;
   isLoading: boolean;
-  listEdit: boolean;
+  listActionButton: boolean;
+  pages: number;
+  pagination: boolean;
   qtSelected: number;
   title: string;
   toolbarActionButton: boolean;
@@ -34,15 +38,17 @@ export class TableDataComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.currentPage = 1;
     this.headers = [];
     this.isLoading = true;
+    this.pagination = false;
 
-    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
-    this.params.list.edit ? this.setListEdit() : this.listEdit = false;
+    this.params.list.actionButton ? this.setListActionButton() : this.listActionButton = false;
     (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
     (this.params.toolbar && this.params.toolbar.actionButton) ? this.setToolbarActionButton() : this.toolbarActionButton = false;
     (this.params.toolbar && this.params.toolbar.delete) ? this.setToolbarDelete() : this.toolbarDelete = false;
     (this.params.actionbar && this.params.actionbar.quantity) ? this.setActionbarQuantity() : this.actionbarQuantity = false;
+    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
   }
 
   setToolbarDelete = () => {
@@ -57,6 +63,8 @@ export class TableDataComponent implements OnInit {
   }
 
   setListContent = () => {
+    this.headers = [];
+
     if (this.params.list.route) {
       this.setListContentByParseRoute();
 
@@ -71,7 +79,7 @@ export class TableDataComponent implements OnInit {
       this.isLoading = false;
     }
 
-    if (!this.total) {
+    if (!this.total) { console.log(76);
       this._crud.countFromRoute({
         route: this.params.list.route
       }).then(res => {
@@ -81,8 +89,14 @@ export class TableDataComponent implements OnInit {
   }
 
   setListContentByParseRoute = () => {
+    let limit, skip;
+    this.pagination ? skip = (this.currentPage - 1) * this.qtSelected : skip = undefined;
+    this.qtSelected ? limit = this.qtSelected : limit = undefined;
+
     this._crud.readFromRoute({
-      route: this.params.list.route
+      route: this.params.list.route,
+      limit: limit,
+      skip: skip
     }).then(res => {
       for (let lim = this.params['list']['columns'].length, i = 0; i < lim; i++) {
         this.headers.push(this.params['list']['columns'][i]['header']);
@@ -95,22 +109,60 @@ export class TableDataComponent implements OnInit {
   setListContentByObject = () => {
   }
 
-  setListEdit = () => {
-    this.listEdit = true;
-  }
-
   setListActionButton = () => {
+    this.listActionButton = true;
   }
 
   setActionbarQuantity = () => {
     this.qtSelected = this.params.actionbar.quantity;
   }
 
+  setCheckAllToDelete = () => {
+
+  }
+
   setErrors = (msg: string) => {
     return msg;
   }
 
+  setPagination = () => {
+    this.pages = Math.round(this.total / this.qtSelected);
+  }
+
+  onChangeQuantity = (e) => {
+    this.qtSelected = e.value;
+    this.setListContent();
+
+    if (this.total > this.qtSelected) {
+      this.setPagination();
+      this.pagination = true;
+    } else {
+      this.pagination = false;
+    }
+  }
+
+  onChangePage = (property) => {
+    property === 'add' ? this.currentPage ++ : this.currentPage --;
+
+    this.setListContent();
+  }
+
+  onClickCheckboxToDelete = (e, rowObject) => {
+    if (rowObject.all) {
+      this.setCheckAllToDelete();
+    } else {
+      e.checked ? this.deleteArray.push(rowObject.id) : this.deleteArray.remove(); // aqui
+    }
+  }
+
   onClickToolbarActionButton = (trigger) => {
     this.tableDataOutput.emit({trigger: trigger});
+  }
+
+  onClickListActionButton = (trigger, rowObject) => {
+    this.tableDataOutput.emit({
+      trigger: trigger,
+      response: rowObject
+    });
   }
 }

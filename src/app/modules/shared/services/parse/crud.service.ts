@@ -52,11 +52,24 @@ export class CrudService {
   })
 
   readFromRoute = (params) => new Promise((res, rej) => {
-    let route, message;
+    let limit, message, query, route, skip;
+    params.limit ? limit = params.limit : limit = undefined;
     params.message ? message = params.message : message = 'Sucesso';
+    params.skip ? skip = params.skip : skip = undefined;
+
     route = params.route;
 
-    new Parse.Query(new Parse.Object(route)).find()
+    query = new Parse.Query(new Parse.Object(route));
+
+    if (skip) { console.log(skip);
+      query.skip(skip);
+    }
+
+    if (limit) {
+      query.limit(limit);
+    }
+
+    query.find()
     .then(response => {
       res({
         message: message,

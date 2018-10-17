@@ -7,9 +7,25 @@ td, th {
     padding: 5px;
 }
 
+#delete-checkbox {
+    width: 15px;
+}
+
+#list-action-button {
+    background: yellow;
+}
+
+#list-action-button div div {
+    float: right;
+}
+
+#navigation div {
+    float: left;
+}
+
 #title {
     width: 50%;
-    background: red;
+    background: blue;
 }
 
 #toolbar-action-button {

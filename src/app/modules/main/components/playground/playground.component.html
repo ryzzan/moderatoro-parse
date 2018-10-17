@@ -1,26 +1,3 @@
-<!-- <mat-card class="container">
-  <form #playgroundFormDirective="ngForm" [formGroup]="playgroundForm" (ngSubmit)="onPlaygroundFormSubmit()">
-    <mat-card-header>
-      <mat-card-title>Meu componente</mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <div class="flex">
-        <mat-form-field>
-          <mat-icon matPrefix>insert_drive_file</mat-icon>
-          <input matInput formControlName="fileName" placeholder="Nome dado ao arquivo" required>
-          <mat-error *ngIf="playgroundForm.get('fileName').errors && playgroundForm.get('fileName').touched">{{playgroundForm.get('fileName').errors.message}}</mat-error>
-        </mat-form-field>
-      </div>
-    </mat-card-content>
-
-    <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="playgroundForm.invalid">Calcula</button>
-        <button mat-raised-button color="primary" (click)="clearForm(playgroundFormDirective)">Limpar</button>
-    </mat-card-actions>
-  </form>
-</mat-card> -->
-
 <mat-card class="container">    
   <app-table-data [params]="paramsToTableData" (tableDataOutput)="tableDataOutputReceiver($event)"></app-table-data>
 </mat-card>

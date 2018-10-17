@@ -16,7 +16,12 @@ export class PlaygroundComponent implements OnInit {
                 delete: {
                     field: 'objectId',
                     message: 'Uma mensagem qualquer caso não queira usar a padrão'
-                }
+                },
+                actionButton: [{
+                    type: 'icon',
+                    value: 'edit',
+                    trigger: 'edit'
+                }]
             },
             list: {
                 route: 'Form',
@@ -26,11 +31,20 @@ export class PlaygroundComponent implements OnInit {
                 }, {
                     attribute: 'placeholder',
                     header: 'Título'
+                }],
+                actionButton: [{
+                    type: 'icon',
+                    value: 'edit',
+                    trigger: 'listEdit'
                 }]
             },
             actionbar: {
                 quantity: 5
             }
         };
+    }
+
+    tableDataOutputReceiver = (e) => {
+        console.log(e);
     }
 }

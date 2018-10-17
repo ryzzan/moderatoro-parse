@@ -23,18 +23,35 @@
 <table *ngIf="!isLoading" id="content">
   <thead>
     <tr>
-      <th *ngIf="toolbarDelete"><mat-checkbox></mat-checkbox></th>
+      <th *ngIf="toolbarDelete"><mat-checkbox (change)="onClickCheckboxToDelete($event, {all: true})"></mat-checkbox></th>
       <th *ngFor="let header of headers;">
         {{header}}
+      </th>
+      <th *ngIf="listActionButton" id="list-action-button">
       </th>
     </tr>
   </thead>
 
   <tbody>
     <tr *ngFor="let column of columns; let h = index;">
-      <td *ngIf="toolbarDelete"><mat-checkbox></mat-checkbox></td>
+      <td *ngIf="toolbarDelete" id="delete-checkbox">
+        <mat-checkbox (change)="onClickCheckboxToDelete($event, column)"></mat-checkbox>
+      </td>
+
       <td *ngFor="let attribute of params.list.columns; let i = index;">
           {{column.attributes[attribute.attribute]}}
+      </td>
+
+      <td *ngIf="listActionButton" id="list-action-button">
+        <div *ngFor="let button of params.list.actionButton;">
+          <div *ngIf="button.type === 'icon'">
+            <mat-icon (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</mat-icon>
+          </div>
+  
+          <div *ngIf="button.type === 'raised'">
+            <button mat-raised-button (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</button>
+          </div>
+        </div>
       </td>
     </tr>
   </tbody>
@@ -44,19 +61,20 @@
   <thead>
     <tr>
       <th id="navigation">
-        <mat-form-field *ngIf="params.actionbar.quantity">
-          <mat-select placeholder="Quantidade" [(value)]="qtSelected">
-            <mat-option *ngFor="let qt of [1,5,10,20,100,1000]" [value]="qt">
-              {{qt}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <div>          
+          <mat-form-field *ngIf="params.actionbar.quantity">
+            <mat-select placeholder="Quantidade" [(value)]="qtSelected" (selectionChange)="onChangeQuantity($event)">
+              <mat-option *ngFor="let qt of [1,2,5,10,20,100,1000]" [value]="qt">
+                {{qt}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div *ngIf="pagination">
+          <mat-icon *ngIf="currentPage > 1" (click)="onChangePage('subtract')" class="clickable-button">keyboard_arrow_left</mat-icon>{{currentPage}} de {{pages}}<mat-icon *ngIf="currentPage < pages" (click)="onChangePage('add')" class="clickable-button">keyboard_arrow_right</mat-icon>
+        </div>
       </th>
     </tr>
   </thead>  
 </table>
-<!-- <div *ngFor="let column of columns;">
-  <div *ngFor="let attribute of params.list.columns; let i = index;">
-    {{column.attributes[attribute.attribute]}}
-  </div>
-</div> -->

@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 /**
  * Services
  */
+import { ArrayService } from '../../services/array.service';
 import { CrudService } from '../../services/parse/crud.service';
-import { Response } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'app-table-data',
@@ -27,21 +27,27 @@ export class TableDataComponent implements OnInit {
   pages: number;
   pagination: boolean;
   qtSelected: number;
+  setAllAsChecked: boolean;
+  setElementAsChecked: boolean;
   title: string;
   toolbarActionButton: boolean;
   toolbarDelete: boolean;
   total: number;
 
   constructor(
-    private _crud: CrudService
+    private _crud: CrudService,
+    private _array: ArrayService
   ) {
   }
 
   ngOnInit() {
     this.currentPage = 1;
+    this.deleteArray = [];
     this.headers = [];
     this.isLoading = true;
     this.pagination = false;
+    this.setAllAsChecked = false;
+    this.setElementAsChecked = false;
 
     this.params.list.actionButton ? this.setListActionButton() : this.listActionButton = false;
     (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
@@ -118,7 +124,20 @@ export class TableDataComponent implements OnInit {
   }
 
   setCheckAllToDelete = () => {
+    this.deleteArray = [];
+    this.setAllAsChecked = true;
+    this.setElementAsChecked = true;
 
+    this.columns.forEach(element => {
+      this.deleteArray.push(element.id);
+    });
+  }
+
+  setUncheckAllToDelete = () => {
+    this.deleteArray = [];
+    this.setAllAsChecked = false;
+    this.setElementAsChecked = false;
+    console.log('Think about the best way to uncheck all to delete');
   }
 
   setErrors = (msg: string) => {
@@ -130,6 +149,7 @@ export class TableDataComponent implements OnInit {
   }
 
   onChangeQuantity = (e) => {
+    this.deleteArray = [];
     this.qtSelected = e.value;
     this.setListContent();
 
@@ -142,16 +162,19 @@ export class TableDataComponent implements OnInit {
   }
 
   onChangePage = (property) => {
-    property === 'add' ? this.currentPage ++ : this.currentPage --;
-
+    this.deleteArray = [];
     this.setListContent();
+
+    property === 'add' ? this.currentPage ++ : this.currentPage --;
   }
 
   onClickCheckboxToDelete = (e, rowObject) => {
     if (rowObject.all) {
-      this.setCheckAllToDelete();
+      e.checked ? this.setCheckAllToDelete() : this.setUncheckAllToDelete();
     } else {
-      e.checked ? this.deleteArray.push(rowObject.id) : this.deleteArray.remove(); // aqui
+      e.checked ? this.deleteArray.push(rowObject.id) : this._array.removeByValue(this.deleteArray, [rowObject.id]);
+
+      this.deleteArray.length === this.columns.length ? this.setCheckAllToDelete() : this.setAllAsChecked = false;
     }
   }
 

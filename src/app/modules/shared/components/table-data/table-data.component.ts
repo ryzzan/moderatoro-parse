@@ -126,6 +126,7 @@ export class TableDataComponent implements OnInit {
   setCheckAllToDelete = () => {
     this.deleteArray = [];
     this.setAllAsChecked = true;
+    this.setElementAsChecked = false;
     this.setElementAsChecked = true;
 
     this.columns.forEach(element => {

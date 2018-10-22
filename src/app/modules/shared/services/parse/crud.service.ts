@@ -61,13 +61,8 @@ export class CrudService {
 
     query = new Parse.Query(new Parse.Object(route));
 
-    if (skip) { console.log(skip);
-      query.skip(skip);
-    }
-
-    if (limit) {
-      query.limit(limit);
-    }
+    if (skip) query.skip(skip);
+    if (limit) query.limit(limit);
 
     query.find()
     .then(response => {

@@ -10,11 +10,9 @@ export class ArrayService {
   }
 
   removeByValue = (array: any[], value: any[]) => new Promise((resolve, reject) => {
-    console.log(array.length);
     for (let lim = array.length, i = 0; i < lim; i++) {
       for (let limV = value.length, j = 0; j < limV; j++) {
         if (value[j] === array[i]) {
-          console.log(array.indexOf(value[j]));
           array.splice(array.indexOf(value[j]), 1);
         }
       }

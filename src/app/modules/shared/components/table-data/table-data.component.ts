@@ -17,21 +17,20 @@ export class TableDataComponent implements OnInit {
   @Input() params: any;
   @Output() tableDataOutput = new EventEmitter();
 
-  actionbarQuantity: boolean;
+  actionbarQuantity = false;
   columns: any;
-  currentPage: number;
-  deleteArray: any;
-  headers: any;
-  isLoading: boolean;
-  listActionButton: boolean;
+  currentPage: number = 1;
+  deleteArray: Array<any> = [];
+  headers: Array<any> = [];
+  isLoading = true;
+  listActionButton = false;
   pages: number;
-  pagination: boolean;
+  pagination = false;
   qtSelected: number;
-  setAllAsChecked: boolean;
-  setElementAsChecked: boolean;
-  title: string;
-  toolbarActionButton: boolean;
-  toolbarDelete: boolean;
+  allAsChecked = false;
+  title: string = '';
+  toolbarActionButton = false;
+  toolbarDelete = false;
   total: number;
 
   constructor(
@@ -41,19 +40,11 @@ export class TableDataComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentPage = 1;
-    this.deleteArray = [];
-    this.headers = [];
-    this.isLoading = true;
-    this.pagination = false;
-    this.setAllAsChecked = false;
-    this.setElementAsChecked = false;
-
-    this.params.list.actionButton ? this.setListActionButton() : this.listActionButton = false;
-    (this.params.toolbar && this.params.toolbar.title) ? this.title = this.params.toolbar.title : this.title = '';
-    (this.params.toolbar && this.params.toolbar.actionButton) ? this.setToolbarActionButton() : this.toolbarActionButton = false;
-    (this.params.toolbar && this.params.toolbar.delete) ? this.setToolbarDelete() : this.toolbarDelete = false;
-    (this.params.actionbar && this.params.actionbar.quantity) ? this.setActionbarQuantity() : this.actionbarQuantity = false;
+    if (this.params.list.actionButton) this.setListActionButton();
+    if (this.params.toolbar && this.params.toolbar.title) this.title = this.params.toolbar.title;
+    if (this.params.toolbar && this.params.toolbar.actionButton) this.setToolbarActionButton();
+    if (this.params.toolbar && this.params.toolbar.delete) this.setToolbarDelete();
+    if (this.params.actionbar && this.params.actionbar.quantity) this.setActionbarQuantity();
     this.params.list ? this.setListContent() : this.setErrors('params.list is required');
   }
 
@@ -63,9 +54,6 @@ export class TableDataComponent implements OnInit {
 
   setToolbarActionButton = () => {
     this.toolbarActionButton = true;
-  }
-
-  setListHeader = () => {
   }
 
   setListContent = () => {
@@ -85,7 +73,7 @@ export class TableDataComponent implements OnInit {
       this.isLoading = false;
     }
 
-    if (!this.total) { console.log(76);
+    if (!this.total) {
       this._crud.countFromRoute({
         route: this.params.list.route
       }).then(res => {
@@ -125,20 +113,21 @@ export class TableDataComponent implements OnInit {
 
   setCheckAllToDelete = () => {
     this.deleteArray = [];
-    this.setAllAsChecked = true;
-    this.setElementAsChecked = false;
-    this.setElementAsChecked = true;
+    this.allAsChecked = true;
 
     this.columns.forEach(element => {
+      element._checked = true;
       this.deleteArray.push(element.id);
     });
   }
 
   setUncheckAllToDelete = () => {
     this.deleteArray = [];
-    this.setAllAsChecked = false;
-    this.setElementAsChecked = false;
-    console.log('Think about the best way to uncheck all to delete');
+    this.allAsChecked = false;
+
+    this.columns.forEach(element => {
+      element._checked = false;
+    });
   }
 
   setErrors = (msg: string) => {
@@ -150,32 +139,42 @@ export class TableDataComponent implements OnInit {
   }
 
   onChangeQuantity = (e) => {
+    this.allAsChecked = false;
     this.deleteArray = [];
     this.qtSelected = e.value;
+    this.currentPage = 1;
+    this.setUncheckAllToDelete();
     this.setListContent();
-
     if (this.total > this.qtSelected) {
       this.setPagination();
       this.pagination = true;
     } else {
       this.pagination = false;
     }
+    console.log(this.columns);
   }
 
-  onChangePage = (property) => {
+  onChangePage = (property) => {console.log(this.columns);
+    this.allAsChecked = false;
     this.deleteArray = [];
     this.setListContent();
-
+    this.setUncheckAllToDelete();
     property === 'add' ? this.currentPage ++ : this.currentPage --;
   }
 
-  onClickCheckboxToDelete = (e, rowObject) => {
+  onClickCheckboxToDelete = (e, rowObject) => { 
     if (rowObject.all) {
       e.checked ? this.setCheckAllToDelete() : this.setUncheckAllToDelete();
     } else {
-      e.checked ? this.deleteArray.push(rowObject.id) : this._array.removeByValue(this.deleteArray, [rowObject.id]);
+      rowObject._checked = e.checked;
 
-      this.deleteArray.length === this.columns.length ? this.setCheckAllToDelete() : this.setAllAsChecked = false;
+      if (e.checked) {
+        this.deleteArray.push(rowObject.id);
+      } else {
+        this._array.removeByValue(this.deleteArray, [rowObject.id]);
+      }
+
+      this.deleteArray.length === this.columns.length ? this.setCheckAllToDelete() : this.allAsChecked = false;
     }
   }
 

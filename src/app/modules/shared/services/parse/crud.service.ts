@@ -52,8 +52,9 @@ export class CrudService {
   })
 
   readFromRoute = (params) => new Promise((res, rej) => {
-    let limit, message, query, route, skip;
+    let limit, match, message, query, route, skip;
     params.limit ? limit = params.limit : limit = undefined;
+    params.match ? match = params.match : match = undefined;
     params.message ? message = params.message : message = 'Sucesso';
     params.skip ? skip = params.skip : skip = undefined;
 
@@ -63,6 +64,11 @@ export class CrudService {
 
     if (skip) query.skip(skip);
     if (limit) query.limit(limit);
+    if (match) {
+      for (let i = 0; i < match.keys.length; i++) {
+        query.matches(match.keys[i], match.regex[i]+'/gi');        
+      }
+    }
 
     query.find()
     .then(response => {

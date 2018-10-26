@@ -19,9 +19,12 @@ export class PlaygroundComponent implements OnInit {
                 },
                 actionButton: [{
                     type: 'icon',
-                    value: 'edit',
-                    trigger: 'edit'
-                }]
+                    value: 'flag',
+                    trigger: 'flag'
+                }],
+                search: {
+                    icon: 'search'
+                }
             },
             list: {
                 route: 'Form',
@@ -35,7 +38,11 @@ export class PlaygroundComponent implements OnInit {
                 actionButton: [{
                     type: 'icon',
                     value: 'edit',
-                    trigger: 'listEdit'
+                    trigger: 'listEdit',
+                    conditionOverFieldValue: [{
+                      field: 'type',
+                      value: 'text'  
+                    }]
                 }]
             },
             actionbar: {

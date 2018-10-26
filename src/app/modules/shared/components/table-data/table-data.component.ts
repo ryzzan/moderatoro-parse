@@ -18,6 +18,7 @@ export class TableDataComponent implements OnInit {
   @Output() tableDataOutput = new EventEmitter();
 
   actionbarQuantity = false;
+  allAsChecked = false;
   columns: any;
   currentPage: number = 1;
   deleteArray: Array<any> = [];
@@ -27,7 +28,7 @@ export class TableDataComponent implements OnInit {
   pages: number;
   pagination = false;
   qtSelected: number;
-  allAsChecked = false;
+  search: any;
   title: string = '';
   toolbarActionButton = false;
   toolbarDelete = false;
@@ -40,12 +41,12 @@ export class TableDataComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.params.list.actionButton) this.setListActionButton();
-    if (this.params.toolbar && this.params.toolbar.title) this.title = this.params.toolbar.title;
+    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
     if (this.params.toolbar && this.params.toolbar.actionButton) this.setToolbarActionButton();
     if (this.params.toolbar && this.params.toolbar.delete) this.setToolbarDelete();
     if (this.params.actionbar && this.params.actionbar.quantity) this.setActionbarQuantity();
-    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
+    if (this.params.toolbar && this.params.toolbar.search) this.search = this.params.toolbar.search;
+    if (this.params.toolbar && this.params.toolbar.title) this.title = this.params.toolbar.title;
   }
 
   setToolbarDelete = () => {
@@ -80,6 +81,8 @@ export class TableDataComponent implements OnInit {
         this.total = res['response'];
       });
     }
+
+    if (this.params.list.actionButton) this.setListActionButton();
   }
 
   setListContentByParseRoute = () => {
@@ -104,6 +107,16 @@ export class TableDataComponent implements OnInit {
   }
 
   setListActionButton = () => {
+    for (let i = 0; i < this.params.list.actionButton.length; i++) {
+      this.params.list.actionButton[i]._condition = true;
+      if (this.params.list.actionButton[i].conditionOverFieldValue) {
+        for (let k = 0; k < this.params.list.actionButton[i].conditionOverFieldValue.length; k++) {
+          const element = this.params.list.actionButton[i].conditionOverFieldValue[k];
+          console.log(element);
+        }
+      }
+    }
+
     this.listActionButton = true;
   }
 

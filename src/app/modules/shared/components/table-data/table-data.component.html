@@ -5,6 +5,10 @@
         {{title}}
       </th>
       
+      <th *ngIf="search" id="toolbar-search">
+        <mat-icon>{{search.icon}}</mat-icon>
+      </th>
+
       <th *ngIf="toolbarActionButton" id="toolbar-action-button">
         <div *ngFor="let button of params.toolbar.actionButton;">
           <div *ngIf="button.type === 'icon'">
@@ -46,7 +50,7 @@
 
       <td *ngIf="listActionButton" id="list-action-button">
         <div *ngFor="let button of params.list.actionButton;">
-          <div *ngIf="button.type === 'icon'">
+          <div *ngIf="button.type === 'icon' && condition">
             <mat-icon (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</mat-icon>
           </div>
   

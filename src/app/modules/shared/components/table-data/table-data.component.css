@@ -16,15 +16,12 @@ td, th {
 }
 
 #list-action-button div div {
-    float: right;
 }
 
 #navigation div {
-    float: left;
 }
 
 #title {
-    width: 50%;
     background: blue;
 }
 
@@ -32,6 +29,9 @@ td, th {
     background: green;
 }
 
+#toolbar-search {
+    background: purple;
+}
+
 #toolbar-action-button div div {
-    float: right;
 }

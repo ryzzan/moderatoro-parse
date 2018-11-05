@@ -6,7 +6,7 @@
       </th>
       
       <th *ngIf="search" id="toolbar-search">
-        <mat-icon>{{search.icon}}</mat-icon>
+        <mat-icon (click)="onClickSearch()">{{search.icon}}</mat-icon>
       </th>
 
       <th *ngIf="toolbarActionButton" id="toolbar-action-button">

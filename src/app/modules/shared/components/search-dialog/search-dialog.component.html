@@ -1,0 +1,7 @@
+<div *ngIf="columns">
+  <div *ngFor="let column of columns">
+    <mat-form-field>
+      <input matInput type="text" [placeholder]="column.header">
+    </mat-form-field>
+  </div>
+</div>

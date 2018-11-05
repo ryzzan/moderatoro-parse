@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
 /**
@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
  */
 import { ArrayService } from '../../services/array.service';
 import { CrudService } from '../../services/parse/crud.service';
+import { SearchDialogComponent } from '../search-dialog/search-dialog.component';
 
 @Component({
   selector: 'app-table-data',
@@ -35,8 +36,9 @@ export class TableDataComponent implements OnInit {
   total: number;
 
   constructor(
+    private _array: ArrayService,
     private _crud: CrudService,
-    private _array: ArrayService
+    private _dialog: MatDialog
   ) {
   }
 
@@ -89,7 +91,6 @@ export class TableDataComponent implements OnInit {
     let limit, skip;
     this.pagination ? skip = (this.currentPage - 1) * this.qtSelected : skip = undefined;
     this.qtSelected ? limit = this.qtSelected : limit = undefined;
-
     this._crud.readFromRoute({
       route: this.params.list.route,
       limit: limit,
@@ -112,7 +113,6 @@ export class TableDataComponent implements OnInit {
       if (this.params.list.actionButton[i].conditionOverFieldValue) {
         for (let k = 0; k < this.params.list.actionButton[i].conditionOverFieldValue.length; k++) {
           const element = this.params.list.actionButton[i].conditionOverFieldValue[k];
-          console.log(element);
         }
       }
     }
@@ -157,22 +157,21 @@ export class TableDataComponent implements OnInit {
     this.qtSelected = e.value;
     this.currentPage = 1;
     this.setUncheckAllToDelete();
-    this.setListContent();
     if (this.total > this.qtSelected) {
       this.setPagination();
       this.pagination = true;
     } else {
       this.pagination = false;
     }
-    console.log(this.columns);
+    this.setListContent();
   }
 
-  onChangePage = (property) => {console.log(this.columns);
+  onChangePage = (property) => {
     this.allAsChecked = false;
     this.deleteArray = [];
-    this.setListContent();
     this.setUncheckAllToDelete();
     property === 'add' ? this.currentPage ++ : this.currentPage --;
+    this.setListContent();
   }
 
   onClickCheckboxToDelete = (e, rowObject) => { 
@@ -199,6 +198,13 @@ export class TableDataComponent implements OnInit {
     this.tableDataOutput.emit({
       trigger: trigger,
       response: rowObject
+    });
+  }
+
+  onClickSearch = () => {
+    const dialogRef = this._dialog.open(SearchDialogComponent, {
+      width: '250px',
+      data: {name: this.params.list.columns}
     });
   }
 }

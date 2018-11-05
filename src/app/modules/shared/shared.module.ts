@@ -25,11 +25,13 @@ import { NumberToLetterPipe } from './pipes/number-to-letter.pipe';
 import { ArrayService } from './services/array.service';
 import { AuthenticationService } from './services/parse/authentication.service';
 import { CrudService } from './services/parse/crud.service';
+import { ObjectService } from './services/object.service';
 
 /**
  * Component
  */
 import { DeleteConfirmComponent } from './components/delete-confirm/delete-confirm.component';
+import { SearchDialogComponent } from './components/search-dialog/search-dialog.component';
 import { TableDataComponent } from './components/table-data/table-data.component';
 
 @NgModule({
@@ -45,19 +47,23 @@ import { TableDataComponent } from './components/table-data/table-data.component
     NumberToLetterPipe,
     ReactiveFormsModule,
     DeleteConfirmComponent,
+    SearchDialogComponent,
     TableDataComponent
   ], declarations: [
     DeleteConfirmComponent,
     FormatDateDmyPipe,
     NumberToLetterPipe,
+    SearchDialogComponent,
     TableDataComponent
   ], providers: [
     ArrayService,
     AuthenticationService,
     AuthGuard,
-    CrudService
+    CrudService,
+    ObjectService
   ], entryComponents: [
-    DeleteConfirmComponent
+    DeleteConfirmComponent,
+    SearchDialogComponent
   ]
 })
 export class SharedModule { }

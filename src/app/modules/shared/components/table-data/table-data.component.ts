@@ -30,6 +30,8 @@ export class TableDataComponent implements OnInit {
   pagination = false;
   qtSelected: number;
   search: any;
+  searchResponse: any;
+  searchString: string;
   title: string = '';
   toolbarActionButton = false;
   toolbarDelete = false;
@@ -88,13 +90,20 @@ export class TableDataComponent implements OnInit {
   }
 
   setListContentByParseRoute = () => {
-    let limit, skip;
+    let limit, skip, search;
+    search = undefined;
+
     this.pagination ? skip = (this.currentPage - 1) * this.qtSelected : skip = undefined;
     this.qtSelected ? limit = this.qtSelected : limit = undefined;
+    if (this.searchString) {
+      search =  {keys: ['type'], regex: [this.searchString]}
+    } 
+    
     this._crud.readFromRoute({
       route: this.params.list.route,
       limit: limit,
-      skip: skip
+      skip: skip,
+      match: search
     }).then(res => {
       for (let lim = this.params['list']['columns'].length, i = 0; i < lim; i++) {
         this.headers.push(this.params['list']['columns'][i]['header']);
@@ -151,7 +160,7 @@ export class TableDataComponent implements OnInit {
     this.pages = Math.round(this.total / this.qtSelected);
   }
 
-  onChangeQuantity = (e) => {
+  onChangeQuantity = (e) => { 
     this.allAsChecked = false;
     this.deleteArray = [];
     this.qtSelected = e.value;
@@ -201,10 +210,20 @@ export class TableDataComponent implements OnInit {
     });
   }
 
-  onClickSearch = () => {
+  onClickAdvancedSearch = () => {
     const dialogRef = this._dialog.open(SearchDialogComponent, {
       width: '250px',
       data: {name: this.params.list.columns}
     });
+  }
+
+  onSearch = (value) => {
+    clearTimeout(this.searchResponse);
+
+    this.searchResponse = setTimeout(() => {
+      this.searchString = value;
+      this.setListContent();
+    }, 700);
+    return null;
   }
 }

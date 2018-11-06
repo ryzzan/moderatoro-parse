@@ -6,7 +6,11 @@
       </th>
       
       <th *ngIf="search" id="toolbar-search">
-        <mat-icon (click)="onClickSearch()">{{search.icon}}</mat-icon>
+        <!-- <mat-icon (click)="onClickAdvancedSearch()">{{search.icon}}</mat-icon> -->
+        <mat-form-field>
+            <mat-icon matPrefix>{{search.icon}}</mat-icon>
+            <input matInput type="text" placeholder="Pesquisa" (keyup)="onSearch($event.target.value)" #searchString>
+        </mat-form-field>
       </th>
 
       <th *ngIf="toolbarActionButton" id="toolbar-action-button">

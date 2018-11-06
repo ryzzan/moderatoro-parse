@@ -7,6 +7,10 @@ td, th {
     padding: 5px;
 }
 
+#actionbar {
+    background: gray;
+}
+
 #delete-checkbox {
     width: 15px;
 }
@@ -22,15 +26,16 @@ td, th {
 }
 
 #title {
-    background: blue;
+}
+
+#toolbar {
+    background: gray;
 }
 
 #toolbar-action-button {
-    background: green;
 }
 
 #toolbar-search {
-    background: purple;
 }
 
 #toolbar-action-button div div {

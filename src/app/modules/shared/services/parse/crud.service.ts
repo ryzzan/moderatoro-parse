@@ -57,7 +57,7 @@ export class CrudService {
     params.match ? match = params.match : match = undefined;
     params.message ? message = params.message : message = 'Sucesso';
     params.skip ? skip = params.skip : skip = undefined;
-
+    console.log(params);
     route = params.route;
 
     query = new Parse.Query(new Parse.Object(route));
@@ -66,16 +66,27 @@ export class CrudService {
     if (limit) query.limit(limit);
     if (match) {
       for (let i = 0; i < match.keys.length; i++) {
-        query.matches(match.keys[i], match.regex[i]+'/gi');        
+        query.matches(match.keys[i], new RegExp(match.regex[i], 'gi'));
       }
     }
-
+    
     query.find()
     .then(response => {
-      res({
-        message: message,
-        response: response
-      });
+      if(match) {
+        query.count()
+        .then(resCount => {
+          res({
+            message: message,
+            response: response,
+            total: resCount
+          });
+        })
+      } else {
+        res({
+          message: message,
+          response: response
+        });
+      }
     });
   })
 

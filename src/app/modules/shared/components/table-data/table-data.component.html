@@ -13,6 +13,10 @@
         </mat-form-field>
       </th>
 
+      <th *ngIf="toolbarDelete && deleteArray.length > 0" id="toolbar-delete">
+          <mat-icon class="clickable-button" (click)="onClickToDelete()">{{delete.icon}}</mat-icon>
+      </th>
+
       <th *ngIf="toolbarActionButton" id="toolbar-action-button">
         <div *ngFor="let button of params.toolbar.actionButton;">
           <div *ngIf="button.type === 'icon'">
@@ -49,16 +53,16 @@
       </td>
 
       <td *ngFor="let attribute of params.list.columns; let i = index;">
-          {{column.attributes[attribute.attribute]}}
+        {{column.attributes[attribute.attribute]}}
       </td>
-
+      
       <td *ngIf="listActionButton" id="list-action-button">
         <div *ngFor="let button of params.list.actionButton;">
-          <div *ngIf="button.type === 'icon' && condition">
+          <div *ngIf="button.type === 'icon' && column._condition">
             <mat-icon (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</mat-icon>
           </div>
   
-          <div *ngIf="button.type === 'raised'">
+          <div *ngIf="button.type === 'raised' && column._condition">
             <button mat-raised-button (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</button>
           </div>
         </div>

@@ -75,6 +75,7 @@ export class CrudService {
       if(match) {
         query.count()
         .then(resCount => {
+          console.log(resCount);
           res({
             message: message,
             response: response,

@@ -14,6 +14,7 @@ export class PlaygroundComponent implements OnInit {
             toolbar: {
                 title: 'Tabela teste',
                 delete: {
+                    icon: "delete",
                     field: 'objectId',
                     message: 'Uma mensagem qualquer caso não queira usar a padrão'
                 },
@@ -40,8 +41,13 @@ export class PlaygroundComponent implements OnInit {
                     value: 'edit',
                     trigger: 'listEdit',
                     conditionOverFieldValue: [{
-                      field: 'type',
-                      value: 'text'  
+                        field: 'type',
+                        logical: '===',
+                        value: 'text'  
+                    }, {
+                        field: 'placeholder',
+                        logical: '===',
+                        value: 'Teste select'  
                     }]
                 }]
             },

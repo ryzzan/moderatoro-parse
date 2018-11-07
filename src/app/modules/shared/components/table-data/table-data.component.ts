@@ -22,10 +22,12 @@ export class TableDataComponent implements OnInit {
   allAsChecked = false;
   columns: any;
   currentPage: number = 1;
+  delete: any;
   deleteArray: Array<any> = [];
   headers: Array<any> = [];
   isLoading = true;
-  listActionButton = false;
+  listActionButton: boolean = false;
+  listActionButtonCondition: string = '';
   pages: number;
   pagination = false;
   qtSelected: number;
@@ -46,15 +48,32 @@ export class TableDataComponent implements OnInit {
 
   ngOnInit() {
     this.params.list ? this.setListContent() : this.setErrors('params.list is required');
+  }
+
+  checkPagination = () => {
+    if (this.total > this.qtSelected) {
+      this.setPagination();
+      this.pagination = true;
+    } else {
+      this.pagination = false;
+    }
+  }
+
+  setListStructure = () => {
     if (this.params.toolbar && this.params.toolbar.actionButton) this.setToolbarActionButton();
     if (this.params.toolbar && this.params.toolbar.delete) this.setToolbarDelete();
     if (this.params.actionbar && this.params.actionbar.quantity) this.setActionbarQuantity();
     if (this.params.toolbar && this.params.toolbar.search) this.search = this.params.toolbar.search;
     if (this.params.toolbar && this.params.toolbar.title) this.title = this.params.toolbar.title;
+    if (this.params.list.actionButton) this.setListActionButton();
   }
 
   setToolbarDelete = () => {
     this.toolbarDelete = true;
+
+    this.delete = this.params.toolbar.delete;
+
+    console.log(this.delete);
   }
 
   setToolbarActionButton = () => {
@@ -77,16 +96,6 @@ export class TableDataComponent implements OnInit {
 
       this.isLoading = false;
     }
-
-    if (!this.total) {
-      this._crud.countFromRoute({
-        route: this.params.list.route
-      }).then(res => {
-        this.total = res['response'];
-      });
-    }
-
-    if (this.params.list.actionButton) this.setListActionButton();
   }
 
   setListContentByParseRoute = () => {
@@ -104,33 +113,64 @@ export class TableDataComponent implements OnInit {
       limit: limit,
       skip: skip,
       match: search
-    }).then(res => {
+    }).then(res => { console.log(res);
       for (let lim = this.params['list']['columns'].length, i = 0; i < lim; i++) {
         this.headers.push(this.params['list']['columns'][i]['header']);
       }
 
       this.columns = res['response'];
+
+      if (res['total']) {
+        this.total = res['total']
+        this.checkPagination();
+        this.setListStructure();
+      } else {
+        this._crud.countFromRoute({
+          route: this.params.list.route
+        }).then(res => {
+          this.total = res['response'];
+          this.checkPagination();
+          this.setListStructure();
+        });
+      } 
     });
   }
 
   setListContentByObject = () => {
   }
 
-  setListActionButton = () => {
+  setListActionButton = () => {    
     for (let i = 0; i < this.params.list.actionButton.length; i++) {
-      this.params.list.actionButton[i]._condition = true;
       if (this.params.list.actionButton[i].conditionOverFieldValue) {
+        this.listActionButton = true;
         for (let k = 0; k < this.params.list.actionButton[i].conditionOverFieldValue.length; k++) {
-          const element = this.params.list.actionButton[i].conditionOverFieldValue[k];
+          let lCheck = undefined;
+          for (let l = 0; l < this.columns.length; l++) {
+            if (lCheck !== l) {
+              if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "===" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "==") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] === this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!==" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!=") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] !== this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] > this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] < this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">=") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] >= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<=") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] <= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else {
+                return "Logical property unknown";
+              }
+            }
+          }
         }
       }
     }
-
-    this.listActionButton = true;
   }
 
   setActionbarQuantity = () => {
-    this.qtSelected = this.params.actionbar.quantity;
+    if (!this.qtSelected) this.qtSelected = this.params.actionbar.quantity;
   }
 
   setCheckAllToDelete = () => {
@@ -166,12 +206,7 @@ export class TableDataComponent implements OnInit {
     this.qtSelected = e.value;
     this.currentPage = 1;
     this.setUncheckAllToDelete();
-    if (this.total > this.qtSelected) {
-      this.setPagination();
-      this.pagination = true;
-    } else {
-      this.pagination = false;
-    }
+    this.checkPagination();
     this.setListContent();
   }
 
@@ -199,6 +234,10 @@ export class TableDataComponent implements OnInit {
     }
   }
 
+  onClickToDelete = () => {
+    this.onClickListActionButton('_delete', {arrayToDelete: this.deleteArray});
+  }
+
   onClickToolbarActionButton = (trigger) => {
     this.tableDataOutput.emit({trigger: trigger});
   }
@@ -222,8 +261,8 @@ export class TableDataComponent implements OnInit {
 
     this.searchResponse = setTimeout(() => {
       this.searchString = value;
+      this.currentPage = 1;
       this.setListContent();
     }, 700);
-    return null;
   }
 }

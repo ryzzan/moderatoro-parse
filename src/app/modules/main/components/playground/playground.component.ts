@@ -29,12 +29,13 @@ export class PlaygroundComponent implements OnInit {
             },
             list: {
                 route: 'Form',
+                crudParams: {
+                    group: ['project'],
+                    order: 'asc'
+                },
                 columns: [{
-                    attribute: 'type',
-                    header: 'Tipo'
-                }, {
-                    attribute: 'placeholder',
-                    header: 'Título'
+                    attribute: 'project',
+                    header: 'Projeto'
                 }],
                 actionButton: [{
                     type: 'icon',
@@ -58,6 +59,12 @@ export class PlaygroundComponent implements OnInit {
     }
 
     tableDataOutputReceiver = (e) => {
-        console.log(e);
+        if (e.trigger === 'listEdit') {
+            console.log(e.response);
+        }
+
+        if (e.trigger === '_delete') {
+            console.log(e.response);
+        }
     }
 }

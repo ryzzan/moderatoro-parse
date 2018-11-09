@@ -49,4 +49,31 @@ export class ArrayService {
 
     resolve(array);
   })
+
+  sortArrayOfObjectsByAttributeValue = (arrayOfObjects: Array<any>, arrayOfAttributes: Array<any>, order: String) => {
+    let recursivity;
+    for (let i = 0; i < arrayOfAttributes.length; i++) {
+      recursivity = false;
+      for (let j = 0; j < arrayOfObjects.length; j++) {
+        if (order === 'desc') {
+          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][arrayOfAttributes[i]] < arrayOfObjects[j+1]['attributes'][arrayOfAttributes[i]])) {
+            this.changePlacesByIndex(j, arrayOfObjects, 'down');
+            recursivity = true;
+          }
+        } if (order === 'asc') {
+          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][arrayOfAttributes[i]] > arrayOfObjects[j+1]['attributes'][arrayOfAttributes[i]])) {
+            this.changePlacesByIndex(j, arrayOfObjects, 'down');
+            recursivity = true;
+          }
+        } else {
+          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][arrayOfAttributes[i]] < arrayOfObjects[j+1]['attributes'][arrayOfAttributes[i]])) {
+            this.changePlacesByIndex(j, arrayOfObjects, 'down');
+            recursivity = true;
+          }
+        }
+      }
+    }
+
+    if (recursivity) this.sortArrayOfObjectsByAttributeValue(arrayOfObjects, arrayOfAttributes, order);
+  }
 }

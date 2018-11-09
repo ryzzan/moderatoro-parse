@@ -72,8 +72,6 @@ export class TableDataComponent implements OnInit {
     this.toolbarDelete = true;
 
     this.delete = this.params.toolbar.delete;
-
-    console.log(this.delete);
   }
 
   setToolbarActionButton = () => {
@@ -99,8 +97,13 @@ export class TableDataComponent implements OnInit {
   }
 
   setListContentByParseRoute = () => {
-    let limit, skip, search;
+    let group, limit, order, search, skip;
     search = undefined;
+
+    if (this.params.list.crudParams) {
+      this.params.list.crudParams.group ? group = this.params.list.crudParams.group : group = undefined;
+      this.params.list.crudParams.order ? order = this.params.list.crudParams.order : order = undefined;
+    }
 
     this.pagination ? skip = (this.currentPage - 1) * this.qtSelected : skip = undefined;
     this.qtSelected ? limit = this.qtSelected : limit = undefined;
@@ -112,8 +115,10 @@ export class TableDataComponent implements OnInit {
       route: this.params.list.route,
       limit: limit,
       skip: skip,
-      match: search
-    }).then(res => { console.log(res);
+      match: search,
+      group: group,
+      order: order
+    }).then(res => {
       for (let lim = this.params['list']['columns'].length, i = 0; i < lim; i++) {
         this.headers.push(this.params['list']['columns'][i]['header']);
       }
@@ -148,34 +153,34 @@ export class TableDataComponent implements OnInit {
           let lCheck = undefined;
           for (let l = 0; l < this.columns.length; l++) {
             if (lCheck !== l) {
-              let el1 = this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field];
-              let el2 = this.params.list.actionButton[i].conditionOverFieldValue[k].value;
-              const logicals = {
-                '===': el1 === el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '==': el1 == el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '!==': el1 !== el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '!=': el1 != el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '>': el1 > el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '<': el1 < el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '>=': el1 >= el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-                '<=': el1 <= el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              };
-              logicals[this.params.list.actionButton[i].conditionOverFieldValue[k].logical];
-              // if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "===" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "==") {
-              //   this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] === this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              // } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!==" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!=") {
-              //   this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] !== this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              // } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">") {
-              //   this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] > this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              // } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<") {
-              //   this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] < this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              // } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">=") {
-              //   this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] >= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              // } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<=") {
-              //   this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] <= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              // } else {
-              //   return "Logical property unknown";
-              // }
+              // let el1 = this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field];
+              // let el2 = this.params.list.actionButton[i].conditionOverFieldValue[k].value;
+              // const logicals = {
+              //   '===': el1 === el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '==': el1 == el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '!==': el1 !== el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '!=': el1 != el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '>': el1 > el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '<': el1 < el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '>=': el1 >= el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              //   '<=': el1 <= el2 ? this.columns[l]['_condition'] = true : lCheck = l,
+              // };
+              // logicals[this.params.list.actionButton[i].conditionOverFieldValue[k].logical];
+              if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "===" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "==") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] === this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!==" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!=") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] !== this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] > this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] < this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">=") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] >= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<=") {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] <= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else {
+                return "Logical property unknown";
+              }
             }
           }
         }

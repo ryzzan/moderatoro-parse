@@ -16,3 +16,14 @@ mat-icon {
 .container {
     margin: 10px;
 }
+
+.form-area-header {
+    
+}
+
+.w5px { width: 5px; } .w10px { width: 10px; } .w20px { width: 20px; } .w25px { width: 25px; } 
+.w50px { width: 50px; } .w80px { width: 80px; } .w90px { width: 90px; } .w100px { width: 100px; }
+.w200px { width: 200px; } .w250px { width: 250px; } .w300px { width: 300px; } .w400px { width: 400px; }
+
+.w5p { width: 5%; } .w10p { width: 10%; } .w20p { width: 20%; } .w25p { width: 25%; } 
+.w50p { width: 50%; } .w80p { width: 80%; } .w90p { width: 90%; } .w100p { width: 100%; }

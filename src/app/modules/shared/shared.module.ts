@@ -31,6 +31,7 @@ import { ObjectService } from './services/object.service';
  * Component
  */
 import { DeleteConfirmComponent } from './components/delete-confirm/delete-confirm.component';
+import { FormCreatorComponent } from './components/form-creator/form-creator.component';
 import { SearchDialogComponent } from './components/search-dialog/search-dialog.component';
 import { TableDataComponent } from './components/table-data/table-data.component';
 
@@ -47,10 +48,12 @@ import { TableDataComponent } from './components/table-data/table-data.component
     NumberToLetterPipe,
     ReactiveFormsModule,
     DeleteConfirmComponent,
+    FormCreatorComponent,
     SearchDialogComponent,
     TableDataComponent
   ], declarations: [
     DeleteConfirmComponent,
+    FormCreatorComponent,
     FormatDateDmyPipe,
     NumberToLetterPipe,
     SearchDialogComponent,
@@ -63,6 +66,7 @@ import { TableDataComponent } from './components/table-data/table-data.component
     ObjectService
   ], entryComponents: [
     DeleteConfirmComponent,
+    FormCreatorComponent,
     SearchDialogComponent
   ]
 })

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material';
+import { FormCreatorComponent } from 'src/app/modules/shared/components/form-creator/form-creator.component';
 
 @Component({
     selector: 'app-playground',
@@ -7,21 +9,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PlaygroundComponent implements OnInit {
     paramsToTableData: any;
-    constructor() { }
+    constructor(
+        public _dialog: MatDialog
+    ) { }
 
     ngOnInit() {
         this.paramsToTableData = {
             toolbar: {
                 title: 'Tabela teste',
                 delete: {
-                    icon: "delete",
+                    icon: 'delete',
                     field: 'objectId',
                     message: 'Uma mensagem qualquer caso não queira usar a padrão'
                 },
                 actionButton: [{
                     type: 'icon',
-                    value: 'flag',
-                    trigger: 'flag'
+                    value: 'add_circle_outline',
+                    trigger: 'add'
                 }],
                 search: {
                     icon: 'search'
@@ -30,8 +34,17 @@ export class PlaygroundComponent implements OnInit {
             list: {
                 route: 'Form',
                 crudParams: {
-                    group: ['project'],
-                    order: 'asc'
+                    group: [{
+                        field: 'project',
+                        order: 'asc'
+                    }],
+                    order: [{
+                        field: 'component',
+                        order: 'asc'
+                    }, {
+                        field: 'project',
+                        order: 'asc'
+                    }]
                 },
                 columns: [{
                     attribute: 'project',
@@ -44,11 +57,11 @@ export class PlaygroundComponent implements OnInit {
                     conditionOverFieldValue: [{
                         field: 'type',
                         logical: '===',
-                        value: 'text'  
+                        value: 'text'
                     }, {
                         field: 'placeholder',
                         logical: '===',
-                        value: 'Teste select'  
+                        value: 'Teste select'
                     }]
                 }]
             },
@@ -59,6 +72,12 @@ export class PlaygroundComponent implements OnInit {
     }
 
     tableDataOutputReceiver = (e) => {
+        if (e.trigger === 'add') {
+            this._dialog.open(FormCreatorComponent, {
+                width: '95%'
+            })
+        }
+        
         if (e.trigger === 'listEdit') {
             console.log(e.response);
         }

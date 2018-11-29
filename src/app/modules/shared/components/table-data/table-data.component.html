@@ -33,7 +33,7 @@
 </table>
 
 <table *ngIf="!isLoading" id="content">
-  <thead>
+  <thead *ngIf="columns?.length > 0">
     <tr>
       <th *ngIf="toolbarDelete">
         <mat-checkbox (change)="onClickCheckboxToDelete($event, {all: true})" [checked]="allAsChecked"></mat-checkbox>
@@ -46,7 +46,11 @@
     </tr>
   </thead>
 
-  <tbody>
+  <thead *ngIf="columns?.length < 1">
+    Nenhum resultado
+  </thead>
+
+  <tbody *ngIf="columns?.length > 0">
     <tr *ngFor="let column of columns; let h = index;">
       <td *ngIf="toolbarDelete" id="delete-checkbox">
         <mat-checkbox (change)="onClickCheckboxToDelete($event, column)" [checked]="column._checked" #deleteCheckbox></mat-checkbox>

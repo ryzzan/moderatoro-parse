@@ -1,0 +1,109 @@
+<div class="form-area">
+  <div class="form-area-header">
+    {{title}}
+  </div>
+  <form [formGroup]="formCreatorForm" (ngSubmit)="onFormCreatorSubmit()">
+    <div class="form-area-content">
+      
+      <mat-form-field *ngIf="!objectToCreateForm.component">
+        <input matInput placeholder="Nome do componente" formControlName="component">
+      </mat-form-field>
+
+      <mat-form-field *ngIf="objectToCreateForm.component">
+        <mat-select formControlName="type" placeholder="Tipo">
+          <mat-option *ngFor="let option of ['checkbox', 'radio', 'select', 'text']" [value]="option"> {{option}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="formCreatorForm.get('type').value">
+        <input matInput formControlName="formControlName"
+        type="text"
+        placeholder="Form control name"
+        (keyup)="checkElementsFormControlNamesExistence($event.target.value); editPlaceholderSuggestion($event.target.value);">
+      </mat-form-field>
+
+      <mat-form-field *ngIf="formCreatorForm.get('type').value">
+        <input matInput formControlName="placeholder"
+        type="text"
+        placeholder="Placeholder">
+      </mat-form-field>
+      
+      <!-- select and radio: start -->
+      <div *ngIf="formCreatorForm.get('type').value == 'select' || formCreatorForm.get('type').value == 'radio'">
+        <button mat-raised-button type="button" (click)="optionsOrigin = 'fill'; options.values = [];">Adicionar opções preenchendo manualmente</button>
+        <button mat-raised-button type="button" (click)="optionsOrigin = 'parse'; options.values = '';">Opções a partir de coleção Parse</button>
+        
+        <div *ngIf="optionsOrigin === 'fill'">
+          <mat-form-field>
+            <input matInput formControlName="optionsFilling"
+            type="text"
+            placeholder="Adicione a descrição das opções">
+          </mat-form-field>
+          
+          <button mat-icon-button type="button" color="primary">
+            <mat-icon aria-label="Adicionar" (click)="optionsAdd()">add</mat-icon>
+          </button>
+    
+          <mat-chip-list *ngIf="options.values.length > 0">
+            <mat-chip *ngFor="let option of options.values">{{option}}</mat-chip>
+          </mat-chip-list>
+        </div>
+  
+        <div *ngIf="optionsOrigin === 'parse'" class="w100p">
+          <mat-form-field class="w100p">
+            <input matInput formControlName="optionsByParse"
+            type="text"
+            placeholder="Informe coleção Parse e o campo ser utilizado como option (collection,field)" class="w100p">
+          </mat-form-field>
+        </div>
+      </div>
+      <!-- select and radio: end -->
+    </div>
+  
+    <div class="form-area-footer">
+      <button mat-raised-button color="primary" [disabled]="disabled || !formCreatorForm.touched">Editar objeto</button>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="objectToCreateForm?.title">
+  {{objectToCreateForm.title}}
+  
+  <div *ngFor="let item of objectToCreateForm.formStructure">
+    <mat-form-field *ngIf="item.type === 'text'">
+      <input matInput [formControlName]="item.formControlName"
+      [type]="item.type"
+      [placeholder]="item.placeholder">
+    </mat-form-field>
+
+    <mat-form-field *ngIf="item.type === 'textarea'">
+      <textarea matInput [formControlName]="item.formControlName"
+      [placeholder]="item.placeholder"></textarea>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="item.type === 'select'">
+      <mat-select [placeholder]="item.placeholder">
+        <mat-option *ngFor="let option of item.options.values" [value]="option">
+          {{option}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+</div>
+
+<!-- <div class="created-form">
+  <div class="form-area">
+    <div class="form-area-header">
+      {{objectToCreateForm.createTitle}}
+      <button mat-button color="primary" (click)="edit('createTitle')">Editar</button>
+    </div>
+    
+    <div class="form-area-content">
+      <button mat-raised-button color="primary" (click)="create()">Criar campo de formulário</button>
+    </div>
+    
+    <div class="form-area-footer">
+    
+    </div>
+  </div>
+</div> -->

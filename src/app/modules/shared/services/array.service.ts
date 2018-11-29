@@ -50,23 +50,23 @@ export class ArrayService {
     resolve(array);
   })
 
-  sortArrayOfObjectsByAttributeValue = (arrayOfObjects: Array<any>, arrayOfAttributes: Array<any>, order: String) => {
+  sortArrayOfObjectsByAttributeValue = (arrayOfObjects: Array<any>, orderObject: Array<any>) => {
     let recursivity;
-    for (let i = 0; i < arrayOfAttributes.length; i++) {
+    for (let i = 0; i < orderObject.length; i++) {
       recursivity = false;
       for (let j = 0; j < arrayOfObjects.length; j++) {
-        if (order === 'desc') {
-          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][arrayOfAttributes[i]] < arrayOfObjects[j+1]['attributes'][arrayOfAttributes[i]])) {
+        if (orderObject[i]['order'] === 'desc') {
+          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][orderObject[i]['field']] < arrayOfObjects[j+1]['attributes'][orderObject[i]['field']])) {
             this.changePlacesByIndex(j, arrayOfObjects, 'down');
             recursivity = true;
           }
-        } if (order === 'asc') {
-          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][arrayOfAttributes[i]] > arrayOfObjects[j+1]['attributes'][arrayOfAttributes[i]])) {
+        } if (orderObject[i]['order'] === 'asc') {
+          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][orderObject[i]['field']] > arrayOfObjects[j+1]['attributes'][orderObject[i]['field']])) {
             this.changePlacesByIndex(j, arrayOfObjects, 'down');
             recursivity = true;
           }
         } else {
-          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][arrayOfAttributes[i]] < arrayOfObjects[j+1]['attributes'][arrayOfAttributes[i]])) {
+          if ((j < (arrayOfObjects.length - 1)) && (arrayOfObjects[j]['attributes'][orderObject[i]['field']] < arrayOfObjects[j+1]['attributes'][orderObject[i]['field']])) {
             this.changePlacesByIndex(j, arrayOfObjects, 'down');
             recursivity = true;
           }
@@ -74,6 +74,6 @@ export class ArrayService {
       }
     }
 
-    if (recursivity) this.sortArrayOfObjectsByAttributeValue(arrayOfObjects, arrayOfAttributes, order);
+    if (recursivity) this.sortArrayOfObjectsByAttributeValue(arrayOfObjects, orderObject);
   }
 }

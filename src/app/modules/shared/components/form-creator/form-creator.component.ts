@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
  */
 import { CrudService } from '../../services/parse/crud.service';
 import { ObjectService } from '../../services/object.service';
+import { StringService } from '../../services/string.service';
 
 @Component({
   selector: 'app-form-creator',
@@ -25,6 +26,7 @@ export class FormCreatorComponent implements OnInit {
   constructor(
     public _crud: CrudService,
     private _object: ObjectService,
+    private _string: StringService,
     public dialogRef: MatDialogRef<FormCreatorComponent>,
     public snackbar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -63,27 +65,16 @@ export class FormCreatorComponent implements OnInit {
     }
   }
 
-  checkElementsFormControlNamesExistence = (value) => {
-    clearTimeout(this.checkValues);
-
-    this.checkValues = setTimeout(() => {
-      this._object.checkExistenceOfAttributeValue(
-        this.objectToCreateForm,
-        this.formCreatorForm.value.formControlName,
-        value
-      )
-      .catch(rej => {
-        this.valid = false;
-        this.formCreatorForm.get('formControlName').hasError('Já existe este formControlName no objeto');
-        this.snackbar.open('Já existe este formControlName no objeto', '', {
-          duration: 4000
-        });
-      })
-      .then(res => {
-        this.valid = true;
-      });
-    }, 600);
-  }
+  checkElementsFormControlNamesExistence = () => new Promise((resolve, reject) => {
+    this._object.checkExistenceOfAttributeValue(
+      this.objectToCreateForm.formStructure,
+      'formControlName',
+      this.formCreatorForm.get('formControlName').value
+    )
+    .then(res => {
+      resolve(res);
+    });
+  })
 
   optionsAdd = () => new Promise((resolve, reject) => {
     if (
@@ -95,8 +86,6 @@ export class FormCreatorComponent implements OnInit {
       this.options['type'] = 'fill';
 
       this.formCreatorForm.get('optionsFilling').patchValue(null);
-
-      resolve(this.options);
     } else if (
       this.formCreatorForm.value.optionsByParse
       && this.formCreatorForm.value.formControlName
@@ -127,36 +116,32 @@ export class FormCreatorComponent implements OnInit {
         resolve(optionsArray);
       });
     } else {
-      resolve(true);
+      if (this.options.values.length > 0) {
+        resolve(this.options);
+      } else {
+        resolve(true);
+      }
     }
+
   })
 
   editPlaceholderSuggestion = (value) => {
-    clearTimeout(this.checkValues);
-
-    this.checkValues = setTimeout(() => {
-      if (!this.formCreatorForm.get('placeholder').value || this.formCreatorForm.get('placeholder').value !== '') {
-        for (let i = 0; i < value.length; i++) {
-          const element = value[i];
-          if (element.match(/[A-Z0-9]/)) {
-          }
-        }
-        const splits = value.replace(/[A-Z0-9]/, ' ');
-        console.log(splits);
-      }
-    }, 400);
+    if (
+      !this.formCreatorForm.get('placeholder').value
+      || this.formCreatorForm.get('placeholder').value === ''
+    ) {
+      this._string.transformCamelCaseOrUnderlinedString(value, 'first')
+      .then(res => {
+        this.formCreatorForm.get('placeholder').setValue(res);
+      });
+    }
   }
 
   editTitleSuggestion = () => {
-    let temp, title;
-    title = '';
-    temp = this.objectToCreateForm.component.split('_');
-
-    for (let i = 0; i < temp.length; i++) {
-      title += temp[i].toUpperCase() + ' ';
-    }
-    console.log(title);
-    this.objectToCreateForm.title = title;
+    this._string.transformCamelCaseOrUnderlinedString(this.formCreatorForm.get('component').value, 'camel')
+    .then(res => {
+      this.objectToCreateForm.title = res;
+    });
   }
 
   onFormCreatorSubmit = () => {
@@ -166,24 +151,45 @@ export class FormCreatorComponent implements OnInit {
       this.editTitleSuggestion();
     }
 
-    this.optionsAdd()
+    this.checkElementsFormControlNamesExistence()
     .then(res => {
-      console.log(this.formCreatorForm);
-      if (this.formCreatorForm.value.type) {
-        this.objectToCreateForm['formStructure'].push({
-          type: this.formCreatorForm.value.type,
-          formControlName: this.formCreatorForm.value.formControlName,
-          placeholder: this.formCreatorForm.value.placeholder,
-          options: res
+      if (res['attributeValueExists']) {
+        this.valid = false;
+        this.formCreatorForm.get('formControlName').hasError('Já existe este formControlName no objeto');
+        this.snackbar.open('Já existe este formControlName no objeto', '', {
+          duration: 4000
         });
+
+        this.options = {
+          type: null,
+          values: []
+        };
+
+        this.formCreatorForm.reset();
+
+        return false;
       }
 
-      this.options = {
-        type: null,
-        values: []
-      };
+      this.optionsAdd()
+      .then(resolve => {
+        if (this.formCreatorForm.value.type) {
+          this.objectToCreateForm['formStructure'].push({
+            type: this.formCreatorForm.value.type,
+            formControlName: this.formCreatorForm.value.formControlName,
+            placeholder: this.formCreatorForm.value.placeholder,
+            options: resolve
+          });
+        }
 
-      this.formCreatorForm.reset();
+        this.options = {
+          type: null,
+          values: []
+        };
+
+        this.formCreatorForm.reset();
+      });
     });
+
+    console.log(this.objectToCreateForm);
   }
 }

@@ -6,10 +6,22 @@ export class ObjectService {
   constructor() { }
 
   checkExistenceOfAttributeValue = (object: any, attributeToCheck: string, valueToCheck: string) => new Promise((resolve, reject) => {
-    if (object[attributeToCheck] === valueToCheck) {
-      resolve(true);
-    } else {
-      reject(false);
+    if (object) {
+      if (object.length && object.length > 0) {
+        for (let i = 0; i < object.length; i++) {
+          const element = object[i];
+          console.log(element, element[attributeToCheck], attributeToCheck, valueToCheck);
+          if (element[attributeToCheck] === valueToCheck) {
+            resolve({attributeValueExists: true});
+          }
+        }
+
+        resolve({attributeValueExists: false});
+      } else {
+        (object[attributeToCheck] === valueToCheck)
+        ? resolve({attributeValueExists: true})
+        : resolve({attributeValueExists: false});
+      }
     }
   })
 

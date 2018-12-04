@@ -2,7 +2,7 @@
   <div class="form-area-header">
     {{title}}
   </div>
-  <form [formGroup]="formCreatorForm" (ngSubmit)="onFormCreatorSubmit()">
+  <form [formGroup]="formCreatorForm" (ngSubmit)="onFormCreatorSubmit()" autocomplete="off">
     <div class="form-area-content">
       
       <mat-form-field *ngIf="!objectToCreateForm.component">
@@ -18,19 +18,21 @@
       <mat-form-field *ngIf="formCreatorForm.get('type').value">
         <input matInput formControlName="formControlName"
         type="text"
-        placeholder="Form control name"
-        (keyup)="checkElementsFormControlNamesExistence($event.target.value); editPlaceholderSuggestion($event.target.value);">
+        placeholder="Form control name">
       </mat-form-field>
 
       <mat-form-field *ngIf="formCreatorForm.get('type').value">
         <input matInput formControlName="placeholder"
         type="text"
-        placeholder="Placeholder">
+        placeholder="Placeholder"
+        (focus)="editPlaceholderSuggestion(formCreatorForm.get('formControlName').value);">
       </mat-form-field>
       
       <!-- select and radio: start -->
-      <div *ngIf="formCreatorForm.get('type').value == 'select' || formCreatorForm.get('type').value == 'radio'">
-        <button mat-raised-button type="button" (click)="optionsOrigin = 'fill'; options.values = [];">Adicionar opções preenchendo manualmente</button>
+      <div *ngIf="formCreatorForm.get('type').value == 'select' 
+      || formCreatorForm.get('type').value == 'radio'
+      || formCreatorForm.get('type').value == 'checkbox'">
+        <button mat-raised-button type="button" (click)="optionsOrigin = 'fill'; options.values = []; formCreatorForm.get('optionsFilling').setValue(null)">Adicionar opções preenchendo manualmente</button>
         <button mat-raised-button type="button" (click)="optionsOrigin = 'parse'; options.values = '';">Opções a partir de coleção Parse</button>
         
         <div *ngIf="optionsOrigin === 'fill'">
@@ -40,8 +42,8 @@
             placeholder="Adicione a descrição das opções">
           </mat-form-field>
           
-          <button mat-icon-button type="button" color="primary">
-            <mat-icon aria-label="Adicionar" (click)="optionsAdd()">add</mat-icon>
+          <button mat-icon-button type="button" color="primary" (click)="optionsAdd()">
+            <mat-icon aria-label="Adicionar" title="Adicionar">add</mat-icon>
           </button>
     
           <mat-chip-list *ngIf="options.values.length > 0">
@@ -53,7 +55,7 @@
           <mat-form-field class="w100p">
             <input matInput formControlName="optionsByParse"
             type="text"
-            placeholder="Informe coleção Parse e o campo ser utilizado como option (collection,field)" class="w100p">
+            placeholder="Informe coleção Parse e o campo ser utilizado como option (collection,property)" class="w100p">
           </mat-form-field>
         </div>
       </div>
@@ -66,18 +68,18 @@
   </form>
 </div>
 
-<div *ngIf="objectToCreateForm?.title">
+<div *ngIf="objectToCreateForm?.title" class="object-area">
   {{objectToCreateForm.title}}
   
   <div *ngFor="let item of objectToCreateForm.formStructure">
     <mat-form-field *ngIf="item.type === 'text'">
-      <input matInput [formControlName]="item.formControlName"
+      <input matInput
       [type]="item.type"
       [placeholder]="item.placeholder">
     </mat-form-field>
 
     <mat-form-field *ngIf="item.type === 'textarea'">
-      <textarea matInput [formControlName]="item.formControlName"
+      <textarea matInput
       [placeholder]="item.placeholder"></textarea>
     </mat-form-field>
 
@@ -88,6 +90,22 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+
+    <section class="radio-area" *ngIf="item.type === 'radio'">
+      <label class="radio-area-title">{{item.placeholder}}</label>
+      <mat-radio-group>
+        <mat-radio-button *ngFor="let option of item.options.values" [value]="option">
+          {{option}}
+        </mat-radio-button>
+      </mat-radio-group>
+    </section>
+
+    <section class="checkbox-area" *ngIf="item.type === 'checkbox'">
+      <label class="checkbox-area-title">{{item.placeholder}}</label>
+      <mat-checkbox *ngFor="let option of item.options.values" [value]="option">
+        {{option}}
+      </mat-checkbox>
+    </section>
   </div>
 </div>
 

@@ -1,22 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { FormCreatorComponent } from 'src/app/modules/shared/components/form-creator/form-creator.component';
+
+/**
+ * Components
+ */
+import { AreaDialogComponent } from './area-dialog/area-dialog.component';
 
 @Component({
-    selector: 'app-playground',
-    templateUrl: './playground.component.html',
-    styleUrls: ['./playground.component.css']
+    selector: 'app-area',
+    templateUrl: './area.component.html',
+    styleUrls: ['./area.component.css']
 })
-export class PlaygroundComponent implements OnInit {
+export class AreaComponent implements OnInit {
     paramsToTableData: any;
     constructor(
         public _dialog: MatDialog
     ) { }
 
     ngOnInit() {
+        this.makeList();
+    }
+
+    makeList = () => {
+        console.log(25);
         this.paramsToTableData = {
             toolbar: {
-                title: 'Tabela teste',
+                title: 'Áreas',
                 delete: {
                     icon: 'delete',
                     field: 'objectId',
@@ -32,36 +41,25 @@ export class PlaygroundComponent implements OnInit {
                 }
             },
             list: {
-                route: 'Form',
+                route: 'Area',
                 crudParams: {
-                    group: [{
-                        field: 'project',
-                        order: 'asc'
-                    }],
                     order: [{
-                        field: 'component',
-                        order: 'asc'
-                    }, {
-                        field: 'project',
+                        field: 'name',
                         order: 'asc'
                     }]
                 },
                 columns: [{
-                    attribute: 'project',
-                    header: 'Projeto'
+                    attribute: 'name',
+                    header: 'Nome'
                 }],
                 actionButton: [{
                     type: 'icon',
                     value: 'edit',
                     trigger: 'listEdit',
                     conditionOverFieldValue: [{
-                        field: 'type',
+                        field: 'name',
                         logical: '===',
-                        value: 'text'
-                    }, {
-                        field: 'placeholder',
-                        logical: '===',
-                        value: 'Teste select'
+                        value: 'Tecnologia'
                     }]
                 }]
             },
@@ -73,11 +71,18 @@ export class PlaygroundComponent implements OnInit {
 
     tableDataOutputReceiver = (e) => {
         if (e.trigger === 'add') {
-            this._dialog.open(FormCreatorComponent, {
+            const dialogRef = this._dialog.open(AreaDialogComponent, {
                 width: '95%'
-            })
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result.response) {
+                    console.log(79);
+                    this.makeList();
+                }
+            });
         }
-        
+
         if (e.trigger === 'listEdit') {
             console.log(e.response);
         }

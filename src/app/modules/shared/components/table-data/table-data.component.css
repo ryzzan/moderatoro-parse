@@ -16,7 +16,7 @@ td, th {
 }
 
 #list-action-button {
-    background: yellow;
+    float: right;
 }
 
 #list-action-button div div {

@@ -62,11 +62,11 @@
       
       <td *ngIf="listActionButton" id="list-action-button">
         <div *ngFor="let button of params.list.actionButton;">
-          <div *ngIf="button.type === 'icon' && column._condition">
+          <div *ngIf="button.type === 'icon' && (column._condition || !params.list.actionButton.conditionOverFieldValue)">
             <mat-icon (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</mat-icon>
           </div>
   
-          <div *ngIf="button.type === 'raised' && column._condition">
+          <div *ngIf="button.type === 'raised' && (column._condition || !params.list.actionButton.conditionOverFieldValue)">
             <button mat-raised-button (click)="onClickListActionButton(button.trigger, column)" class="clickable-button">{{button.value}}</button>
           </div>
         </div>

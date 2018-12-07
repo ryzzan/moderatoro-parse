@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, Inject } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, Inject, OnChanges } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -14,27 +14,27 @@ import { SearchDialogComponent } from '../search-dialog/search-dialog.component'
   templateUrl: './table-data.component.html',
   styleUrls: ['./table-data.component.css']
 })
-export class TableDataComponent implements OnInit {
+export class TableDataComponent implements OnInit, OnChanges {
   @Input() params: any;
   @Output() tableDataOutput = new EventEmitter();
 
   actionbarQuantity = false;
   allAsChecked = false;
   columns: any;
-  currentPage: number = 1;
+  currentPage = 1;
   delete: any;
   deleteArray: Array<any> = [];
   headers: Array<any> = [];
   isLoading = true;
-  listActionButton: boolean = false;
-  listActionButtonCondition: string = '';
+  listActionButton = false;
+  listActionButtonCondition = '';
   pages: number;
   pagination = false;
   qtSelected: number;
   search: any;
   searchResponse: any;
   searchString: string;
-  title: string = '';
+  title = '';
   toolbarActionButton = false;
   toolbarDelete = false;
   total: number;
@@ -46,7 +46,11 @@ export class TableDataComponent implements OnInit {
   ) {
   }
 
-  ngOnInit() {
+  ngOnInit() { console.log(49);
+    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
+  }
+
+  ngOnChanges() {
     this.params.list ? this.setListContent() : this.setErrors('params.list is required');
   }
 
@@ -60,12 +64,12 @@ export class TableDataComponent implements OnInit {
   }
 
   setListStructure = () => {
-    if (this.params.toolbar && this.params.toolbar.actionButton) this.setToolbarActionButton();
-    if (this.params.toolbar && this.params.toolbar.delete) this.setToolbarDelete();
-    if (this.params.actionbar && this.params.actionbar.quantity) this.setActionbarQuantity();
-    if (this.params.toolbar && this.params.toolbar.search) this.search = this.params.toolbar.search;
-    if (this.params.toolbar && this.params.toolbar.title) this.title = this.params.toolbar.title;
-    if (this.params.list.actionButton) this.setListActionButton();
+    if (this.params.toolbar && this.params.toolbar.actionButton) { this.setToolbarActionButton(); }
+    if (this.params.toolbar && this.params.toolbar.delete) { this.setToolbarDelete(); }
+    if (this.params.actionbar && this.params.actionbar.quantity) { this.setActionbarQuantity(); }
+    if (this.params.toolbar && this.params.toolbar.search) { this.search = this.params.toolbar.search; }
+    if (this.params.toolbar && this.params.toolbar.title) { this.title = this.params.toolbar.title; }
+    if (this.params.list.actionButton) { this.setListActionButton(); }
   }
 
   setToolbarDelete = () => {
@@ -107,10 +111,8 @@ export class TableDataComponent implements OnInit {
 
     this.pagination ? skip = (this.currentPage - 1) * this.qtSelected : skip = undefined;
     this.qtSelected ? limit = this.qtSelected : limit = undefined;
-    if (this.searchString) {
-      search =  {keys: ['type'], regex: [this.searchString]}
-    } 
-    
+    if (this.searchString) { search = {keys: ['type'], regex: [this.searchString]}; }
+
     this._crud.readFromRoute({
       route: this.params.list.route,
       limit: limit,
@@ -126,18 +128,18 @@ export class TableDataComponent implements OnInit {
       this.columns = res['response'];
 
       if (res['total']) {
-        this.total = res['total']
+        this.total = res['total'];
         this.checkPagination();
         this.setListStructure();
       } else {
         this._crud.countFromRoute({
           route: this.params.list.route
-        }).then(res => {
-          this.total = res['response'];
+        }).then(resolve => {
+          this.total = resolve['response'];
           this.checkPagination();
           this.setListStructure();
         });
-      } 
+      }
     });
   }
 
@@ -145,51 +147,60 @@ export class TableDataComponent implements OnInit {
   }
 
   setListActionButton = () => {
-  // Testa aí
     for (let i = 0; i < this.params.list.actionButton.length; i++) {
       if (this.params.list.actionButton[i].conditionOverFieldValue) {
         this.listActionButton = true;
         for (let k = 0; k < this.params.list.actionButton[i].conditionOverFieldValue.length; k++) {
-          let lCheck = undefined;
+          let lCheck;
           for (let l = 0; l < this.columns.length; l++) {
             if (lCheck !== l) {
-              // let el1 = this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field];
-              // let el2 = this.params.list.actionButton[i].conditionOverFieldValue[k].value;
-              // const logicals = {
-              //   '===': el1 === el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '==': el1 == el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '!==': el1 !== el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '!=': el1 != el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '>': el1 > el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '<': el1 < el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '>=': el1 >= el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              //   '<=': el1 <= el2 ? this.columns[l]['_condition'] = true : lCheck = l,
-              // };
-              // logicals[this.params.list.actionButton[i].conditionOverFieldValue[k].logical];
-              if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "===" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "==") {
-                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] === this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!==" || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "!=") {
-                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] !== this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">") {
-                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] > this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<") {
-                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] < this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === ">=") {
-                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] >= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
-              } else if (this.params.list.actionButton[i].conditionOverFieldValue[k].logical === "<=") {
-                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field] <= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              if (
+                this.params.list.actionButton[i].conditionOverFieldValue[k].logical === '==='
+                || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === '=='
+              ) {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field]
+                === this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (
+                this.params.list.actionButton[i].conditionOverFieldValue[k].logical
+                === '!==' || this.params.list.actionButton[i].conditionOverFieldValue[k].logical === '!='
+              ) {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field]
+                !== this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (
+                this.params.list.actionButton[i].conditionOverFieldValue[k].logical === '>'
+              ) {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field]
+                > this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (
+                this.params.list.actionButton[i].conditionOverFieldValue[k].logical
+                === '<'
+              ) {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field]
+                < this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (
+                this.params.list.actionButton[i].conditionOverFieldValue[k].logical === '>='
+              ) {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field]
+                >= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
+              } else if (
+                this.params.list.actionButton[i].conditionOverFieldValue[k].logical === '<='
+              ) {
+                this.columns[l]['attributes'][this.params.list.actionButton[i].conditionOverFieldValue[k].field]
+                <= this.params.list.actionButton[i].conditionOverFieldValue[k].value ? this.columns[l]['_condition'] = true : lCheck = l;
               } else {
-                return "Logical property unknown";
+                return 'Logical property unknown';
               }
             }
           }
         }
+      } else {
+        this.params.list.actionButton[i].conditionOverFieldValue = false;
       }
     }
   }
 
   setActionbarQuantity = () => {
-    if (!this.qtSelected) this.qtSelected = this.params.actionbar.quantity;
+    if (!this.qtSelected) { this.qtSelected = this.params.actionbar.quantity; }
   }
 
   setCheckAllToDelete = () => {
@@ -219,7 +230,7 @@ export class TableDataComponent implements OnInit {
     this.pages = Math.round(this.total / this.qtSelected);
   }
 
-  onChangeQuantity = (e) => { 
+  onChangeQuantity = (e) => {
     this.allAsChecked = false;
     this.deleteArray = [];
     this.qtSelected = e.value;
@@ -237,7 +248,7 @@ export class TableDataComponent implements OnInit {
     this.setListContent();
   }
 
-  onClickCheckboxToDelete = (e, rowObject) => { 
+  onClickCheckboxToDelete = (e, rowObject) => {
     if (rowObject.all) {
       e.checked ? this.setCheckAllToDelete() : this.setUncheckAllToDelete();
     } else {

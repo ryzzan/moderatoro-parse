@@ -4,10 +4,12 @@ import { Routes, RouterModule } from '@angular/router';
 /**
  * Components
  */
+import { AreaComponent } from './components/area/area.component';
+import { ConfigurationComponent } from './components/configuration/configuration.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MainComponent } from './main.component';
-import { PlaygroundComponent } from './components/playground/playground.component';
-import { RuleComponent } from './components/rule/rule.component';
+import { OccupationComponent } from './components/occupation/occupation.component';
+import { ParticipantComponent } from './components/participant/participant.component';
 
 const routes: Routes = [{
   path: '', component: MainComponent, children: [{
@@ -18,11 +20,17 @@ const routes: Routes = [{
     path: 'dashboard',
     component: DashboardComponent
   }, {
-    path: 'rule',
-    component: RuleComponent
+    path: 'participant',
+    component: ParticipantComponent
   }, {
-    path: 'playground',
-    component: PlaygroundComponent
+    path: 'occupation',
+    component: OccupationComponent
+  }, {
+    path: 'configuration',
+    component: ConfigurationComponent
+  }, {
+    path: 'area',
+    component: AreaComponent
   }]
 }];
 

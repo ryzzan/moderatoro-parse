@@ -29,13 +29,17 @@ export class MainComponent implements OnInit {
     icon: 'home',
     link: ['dashboard']
   }, {
-    name: 'Regras',
+    name: 'Participantes',
     icon: 'account_circle',
-    link: ['rule']
+    link: ['participant']
   }, {
-    name: 'Playground',
+    name: 'Occupações',
     icon: 'toys',
-    link: 'playground'
+    link: 'occupation'
+  }, {
+    name: 'Configurações',
+    icon: 'toys',
+    link: 'configuration'
   }];
 
   constructor(

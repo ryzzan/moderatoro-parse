@@ -19,7 +19,7 @@ export class CrudService {
   constructor(
     private _array: ArrayService
   ) {
-    Parse.initialize('thcu7IuHJHPDH8n0SqG2m6wRRLUA7pGyAHFLVkzs', 'IYLVaGn4u809YBJO0y6dAirCQIPrUCzOQRq8TweO');
+    Parse.initialize('qPZfPQPQGttsCpugKLR1j6BNqlLJ1G2WTIEqKH9H', 'wKafb4TZ5Pj0Gw8BMvNyfDdGW5U8S0jaRsGvx5C7');
     Parse.serverURL = 'https://parseapi.back4app.com/';
   }
 
@@ -31,41 +31,102 @@ export class CrudService {
         message: 'Defina parâmetros mínimos'
       });
     } else {
-      if (!params.collection) {
+      if (!params.route) {
         res({
           code: 'c-error-02',
-          message: 'Parâmetro obrigatório: collection'
+          message: 'Parâmetro obrigatório: route'
         });
       }
 
-      if (!params.object) {
+      if (!params.objectToCreate) {
         res({
           code: 'c-error-03',
-          message: 'Parâmetro obrigatório: object'
+          message: 'Parâmetro obrigatório: objectToCreate'
         });
       }
     }
     // Set params errors: end
+    const route = params.route, Class = new Parse.Object.extend(route);
+    let message, object, objectToCreate, objectProperties;
 
-    let obj;
+    params.message ? message = params.message : message = 'Sucesso';
 
-    obj = new params.object;
+    objectToCreate = params.objectToCreate;
+    objectProperties = Object.keys(objectToCreate);
+    object = new Class();
+
+    for (let i = 0; i < objectProperties.length; i++) {
+      const element = objectProperties[i];
+      object.set(element, objectToCreate[element]);
+    }
+
+    object.save()
+    .then((resolve) => {
+      // Execute any logic that should take place after the object is saved.
+      res({
+        message: 'Novo objeto criado com objectId ' + resolve.id
+      });
+    }, (error) => {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      rej({
+        message: 'Falha ao criar objeto, com o seguinte código de erro: ' + error.message
+      });
+    });
   })
 
   delete = (params)  => new Promise((res, rej) => {
-    let route: string, paramToDelete: any;
+    // Set params errors: start
+    if (!params) {
+      res({
+        code: 'd-error-01',
+        message: 'Defina parâmetros mínimos'
+      });
+    } else {
+      if (!params.route) {
+        res({
+          code: 'd-error-02',
+          message: 'Parâmetro obrigatório: route'
+        });
+      }
+
+      if (!params.objectToDelete) {
+        res({
+          code: 'd-error-03',
+          message: 'Parâmetro obrigatório: objectToDelete'
+        });
+      }
+
+      if (!params.objectToDelete.where) {
+        res({
+          code: 'd-error-04',
+          message: 'Parâmetro obrigatório: objectToDelete.where ({property: Array<string>, value: Array<any>})'
+        });
+      }
+    }
+    // Set params errors: end
+    let route, where, object;
     route = params.route;
-    paramToDelete = params.paramToDelete;
+    where = params.objectToDelete.where;
+
+    this.readFromRoute({
+      route: route,
+      where: where
+    })
+    .then(resolve => {
+      console.log(resolve);
+    });
   })
 
   readFromRoute = (params) => new Promise((res, rej) => {
-    let group, limit, match, message, order, query, route, skip;
+    let group, limit, match, message, order, query, route, skip, where;
     params.group ? group = params.group : group = undefined;
     params.limit ? limit = params.limit : limit = undefined;
     params.match ? match = params.match : match = undefined;
     params.message ? message = params.message : message = 'Sucesso';
     params.order ? order = params.order : order = undefined;
     params.skip ? skip = params.skip : skip = undefined;
+    params.where ? where = params.where : where = undefined;
     route = params.route;
 
     query = new Parse.Query(new Parse.Object(route));
@@ -79,6 +140,12 @@ export class CrudService {
     if (match) {
       for (let i = 0; i < match.keys.length; i++) {
         query.matches(match.keys[i], new RegExp(match.regex[i], 'gi'));
+      }
+    }
+
+    if (where) {
+      for (let i = 0; i < where.property.length; i++) {
+        query.equalTo(where.property[i], where.value[i]);
       }
     }
 
@@ -123,6 +190,29 @@ export class CrudService {
   })
 
   readFromObject = (params) => new Promise((res, rej) => {
+  })
+
+  update = (params) => new Promise((res, rej) => {
+    if (!params) {
+      res({
+        code: 'u-error-01',
+        message: 'Defina parâmetros mínimos'
+      });
+    } else {
+      if (!params.route) {
+        res({
+          code: 'u-error-02',
+          message: 'Parâmetro obrigatório: route'
+        });
+      }
+
+      if (!params.where) {
+        res({
+          code: 'u-error-03',
+          message: 'Parâmetro obrigatório: where'
+        });
+      }
+    }
   })
 
   countFromRoute = (params) => new Promise((res, rej) => {

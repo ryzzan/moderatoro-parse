@@ -6,6 +6,11 @@ import { MatDialog } from '@angular/material';
  */
 import { AreaDialogComponent } from './area-dialog/area-dialog.component';
 
+/**
+ * Services
+ */
+import { CrudService } from './../../../shared/services/parse/crud.service';
+
 @Component({
     selector: 'app-area',
     templateUrl: './area.component.html',
@@ -14,6 +19,7 @@ import { AreaDialogComponent } from './area-dialog/area-dialog.component';
 export class AreaComponent implements OnInit {
     paramsToTableData: any;
     constructor(
+        private _crud: CrudService,
         public _dialog: MatDialog
     ) { }
 
@@ -77,7 +83,6 @@ export class AreaComponent implements OnInit {
 
             dialogRef.afterClosed().subscribe(result => {
                 if (result.response) {
-                    console.log(79);
                     this.makeList();
                 }
             });
@@ -89,6 +94,18 @@ export class AreaComponent implements OnInit {
 
         if (e.trigger === '_delete') {
             console.log(e.response);
+
+            this._crud
+            .delete({
+                route: 'Area',
+                containedIn: [{
+                    property: 'objectId',
+                    valueArray: e.response.arrayToDelete
+                }]
+            })
+            .then(res => {
+                console.log(res);
+            });
         }
     }
 }

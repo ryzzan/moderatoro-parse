@@ -47,9 +47,7 @@ export class CrudService {
     }
     // Set params errors: end
     const route = params.route, Class = new Parse.Object.extend(route);
-    let message, object, objectToCreate, objectProperties;
-
-    params.message ? message = params.message : message = 'Sucesso';
+    let object, objectToCreate, objectProperties;
 
     objectToCreate = params.objectToCreate;
     objectProperties = Object.keys(objectToCreate);
@@ -90,38 +88,76 @@ export class CrudService {
         });
       }
 
-      if (!params.objectToDelete) {
+      if (!params.where && !params.containedIn) {
         res({
           code: 'd-error-03',
-          message: 'Parâmetro obrigatório: objectToDelete'
-        });
-      }
-
-      if (!params.objectToDelete.where) {
-        res({
-          code: 'd-error-04',
-          message: 'Parâmetro obrigatório: objectToDelete.where ({property: Array<string>, value: Array<any>})'
+          message: 'Parâmetro obrigatório: where OU containedIn'
         });
       }
     }
     // Set params errors: end
-    let route, where, object;
-    route = params.route;
-    where = params.objectToDelete.where;
+    const route = params.route, Class = new Parse.Object.extend(route);
+    let containedIn, where, object;
+    params.where ? where = params.where : where = undefined;
+    params.containedIn ? containedIn = params.containedIn : containedIn = undefined;
+    object = new Class();
 
     this.readFromRoute({
       route: route,
-      where: where
+      where: where,
+      containedIn: containedIn
     })
     .then(resolve => {
-      console.log(resolve);
+      object = resolve['response'];
+
+      if (object.length > 0) {
+        for (let i = 0; i < object.length; i++) {
+          const element = object[i];
+          element.destroy()
+          .then((resolveDelete) => {
+            // Execute any logic that should take place after the object is saved.
+          }, (error) => {
+            // Execute any logic that should take place if the save fails.
+            // error is a Parse.Error with an error code and message.
+            rej({
+              message: 'Falha ao criar objeto, com o seguinte código de erro: ' + error.message
+            });
+          });
+        }
+
+        if (containedIn && containedIn.valueArray.length > 1) {
+          let stringToMessage = '';
+
+          for (let i = 0; i < containedIn.valueArray.length; i++) {
+            const element = containedIn.valueArray[i];
+            stringToMessage += element;
+
+            if (i < containedIn.valueArray.length - 2) {
+              stringToMessage += ', ';
+            } else {
+              if (i < containedIn.valueArray.length - 1) {
+                stringToMessage += ' e ';
+              }
+            }
+          }
+
+          res({
+            message: 'Objetos com os objectIds ' + stringToMessage + ' foram destruídos'
+          });
+        } else {
+          res({
+            message: 'Objeto com objectId ' + containedIn.valueArray[0] + ' foi destruído'
+          });
+        }
+      }
     });
   })
 
   readFromRoute = (params) => new Promise((res, rej) => {
-    let group, limit, match, message, order, query, route, skip, where;
+    let group, limit, match, containedIn, message, order, query, route, skip, where;
     params.group ? group = params.group : group = undefined;
     params.limit ? limit = params.limit : limit = undefined;
+    params.containedIn ? containedIn = params.containedIn : containedIn = undefined;
     params.match ? match = params.match : match = undefined;
     params.message ? message = params.message : message = 'Sucesso';
     params.order ? order = params.order : order = undefined;
@@ -149,6 +185,13 @@ export class CrudService {
       }
     }
 
+    if (containedIn) {
+      for (let i = 0; i < containedIn.length; i++) {
+        console.log(containedIn[i].property, containedIn[i].valueArray);
+        query.containedIn(containedIn[i].property, containedIn[i].valueArray);
+      }
+    }
+    console.log(query);
     query.find()
     .then(response => {
       if (group) {

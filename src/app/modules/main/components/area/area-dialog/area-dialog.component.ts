@@ -40,7 +40,7 @@ export class AreaDialogComponent implements OnInit {
       'name': new FormControl(null, [Validators.maxLength(145), Validators.required])
     });
     /*update start*/
-    console.log(this.data);
+
     if (this.data && this.data.id) {
       this.paramToSearch = this.data.id;
       this.submitToCreate = false;
@@ -50,20 +50,20 @@ export class AreaDialogComponent implements OnInit {
 
       this.crud.readFromRoute({
         route: 'Area',
-        order: ['id', 'desc'],
+        order: ['objectId', 'desc'],
         where: [{
-          keys: 'id',
+          property: 'objectId',
           value: this.data.id
         }]
       }).then(res => {
-        const obj = res['obj'][0];
+        const obj = res['response'][0]['attributes'];
 
-        this.areaDialogForm.get('name').setValue(name);
+        this.areaDialogForm.get('name').setValue(obj.name);
       });
     } else {
       this.submitToCreate = true;
       this.submitToUpdate = false;
-      this.title = 'Cadastrar área';
+      this.title = 'Cadastrar Área';
       this.submitButton = 'Salvar';
     }
     /*update end*/
@@ -72,13 +72,17 @@ export class AreaDialogComponent implements OnInit {
   onAreaDialogSubmit = () => {
     if (this.submitToUpdate) {
       const params = {
-        route: 'occupations-groups',
+        route: 'Area',
         objectToUpdate: this.areaDialogForm.value,
-        paramToUpdate: this.paramToSearch.replace(':', '')
+        where: {
+          property: 'objectId',
+          value: this.data.id
+        }
       };
 
       this.crud.update(params)
         .then(res => {
+          console.log(res);
           this.matsnackbar.open(res['message'], '', {
             duration: 2000
           });
@@ -106,7 +110,7 @@ export class AreaDialogComponent implements OnInit {
 
           this.dialogRef.close({
             response: 'created',
-            message: 'AreaDialogForm updated new data'
+            message: 'AreaDialogForm created new data'
           });
         }, rej => {
           this.matsnackbar.open(rej['message'], '', {

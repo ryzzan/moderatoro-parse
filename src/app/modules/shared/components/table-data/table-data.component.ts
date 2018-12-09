@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, Inject, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, Inject, OnChanges } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 
@@ -14,7 +14,7 @@ import { SearchDialogComponent } from '../search-dialog/search-dialog.component'
   templateUrl: './table-data.component.html',
   styleUrls: ['./table-data.component.css']
 })
-export class TableDataComponent implements OnInit, OnChanges {
+export class TableDataComponent implements OnChanges {
   @Input() params: any;
   @Output() tableDataOutput = new EventEmitter();
 
@@ -46,12 +46,9 @@ export class TableDataComponent implements OnInit, OnChanges {
   ) {
   }
 
-  ngOnInit() { console.log(49);
-    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
-  }
-
-  ngOnChanges() {
-    this.params.list ? this.setListContent() : this.setErrors('params.list is required');
+  ngOnChanges() { console.log(53);
+    this.isLoading = true;
+    this.params.list ? this.setListStructure() : this.setErrors('params.list is required');
   }
 
   checkPagination = () => {
@@ -69,7 +66,13 @@ export class TableDataComponent implements OnInit, OnChanges {
     if (this.params.actionbar && this.params.actionbar.quantity) { this.setActionbarQuantity(); }
     if (this.params.toolbar && this.params.toolbar.search) { this.search = this.params.toolbar.search; }
     if (this.params.toolbar && this.params.toolbar.title) { this.title = this.params.toolbar.title; }
-    if (this.params.list.actionButton) { this.setListActionButton(); }
+    this.searchString = '';
+
+    if (this.isLoading) {
+      this.setListContent();
+    } else {
+      if (this.params.list.actionButton) { this.setListActionButton(); }
+    }
   }
 
   setToolbarDelete = () => {
@@ -87,16 +90,12 @@ export class TableDataComponent implements OnInit, OnChanges {
 
     if (this.params.list.route) {
       this.setListContentByParseRoute();
-
-      this.isLoading = false;
     } else {
       if (this.params.list.object) {
         this.setListContentByObject();
       } else {
         this.setErrors('params.list.route is required');
       }
-
-      this.isLoading = false;
     }
   }
 
@@ -111,7 +110,7 @@ export class TableDataComponent implements OnInit, OnChanges {
 
     this.pagination ? skip = (this.currentPage - 1) * this.qtSelected : skip = undefined;
     this.qtSelected ? limit = this.qtSelected : limit = undefined;
-    if (this.searchString) { search = {keys: ['type'], regex: [this.searchString]}; }
+    if (this.searchString) { search = {keys: ['name'], regex: [this.searchString]}; }
 
     this._crud.readFromRoute({
       route: this.params.list.route,
@@ -121,11 +120,19 @@ export class TableDataComponent implements OnInit, OnChanges {
       group: group,
       order: order
     }).then(res => {
+      this.isLoading = false;
+
       for (let lim = this.params['list']['columns'].length, i = 0; i < lim; i++) {
         this.headers.push(this.params['list']['columns'][i]['header']);
       }
 
       this.columns = res['response'];
+
+      if (this.columns.length < 1 && this.currentPage > 1) {
+        this.currentPage --;
+        this.isLoading = true;
+        this.setListStructure();
+      }
 
       if (res['total']) {
         this.total = res['total'];
@@ -140,6 +147,8 @@ export class TableDataComponent implements OnInit, OnChanges {
           this.setListStructure();
         });
       }
+
+      this.setUncheckAllToDelete();
     });
   }
 
@@ -200,7 +209,9 @@ export class TableDataComponent implements OnInit, OnChanges {
   }
 
   setActionbarQuantity = () => {
-    if (!this.qtSelected) { this.qtSelected = this.params.actionbar.quantity; }
+    if (!this.qtSelected) {
+      this.qtSelected = this.params.actionbar.quantity;
+    }
   }
 
   setCheckAllToDelete = () => {
@@ -227,7 +238,7 @@ export class TableDataComponent implements OnInit, OnChanges {
   }
 
   setPagination = () => {
-    this.pages = Math.round(this.total / this.qtSelected);
+    this.pages = Math.ceil(this.total / this.qtSelected);
   }
 
   onChangeQuantity = (e) => {

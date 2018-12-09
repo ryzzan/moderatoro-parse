@@ -64,7 +64,6 @@ export class AuthenticationService {
       })
       .then(pRes => {
         if (pRes && pRes.attributes.sessionToken) {
-          console.log(Parse.User.current());
           pRes['code'] = 'l-success-01';
           pRes['message'] = 'Bem vindo';
 

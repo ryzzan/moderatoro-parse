@@ -1,16 +1,16 @@
 <div id="background">
   <mat-card>
-    <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()">
-      <mat-form-field appearance="outline">
+    <form [formGroup]="loginForm" (ngSubmit)="onLoginSubmit()" autocomplete="off">
+      <mat-form-field>
         <mat-label>Usuário</mat-label>
         <mat-icon matPrefix>person</mat-icon>
-        <input matInput formControlName="user" placeholder="Digite seu email">
+        <input matInput formControlName="user" placeholder="Digite seu email" autocomplete="false">
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <mat-form-field>
         <mat-label>Senha</mat-label>
         <mat-icon matPrefix>lock</mat-icon>
-        <input matInput formControlName="password" type="password" placeholder="Digite sua senha">
+        <input matInput formControlName="password" type="password" placeholder="Digite sua senha" autocomplete="false">
       </mat-form-field>
 
       <button mat-raised-button color="primary" [disabled]="disabled || loginForm.invalid || !loginForm.touched">Entrar</button>

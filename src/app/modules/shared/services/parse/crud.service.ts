@@ -125,28 +125,36 @@ export class CrudService {
           });
         }
 
-        if (containedIn && containedIn.valueArray.length > 1) {
+        if (containedIn) {
           let stringToMessage = '';
 
-          for (let i = 0; i < containedIn.valueArray.length; i++) {
-            const element = containedIn.valueArray[i];
-            stringToMessage += element;
+          for (let i = 0; i < containedIn.length; i++) {
+            if (containedIn[i].valueArray.length > 1) {
+              for (let j = 0; j < containedIn[i].valueArray.length; j++) {
+                const element = containedIn[i].valueArray[j];
+                stringToMessage += element;
 
-            if (i < containedIn.valueArray.length - 2) {
-              stringToMessage += ', ';
-            } else {
-              if (i < containedIn.valueArray.length - 1) {
-                stringToMessage += ' e ';
+                if (j < containedIn[i].valueArray.length - 2) {
+                  stringToMessage += ', ';
+                } else {
+                  if (j < containedIn[i].valueArray.length - 1) {
+                    stringToMessage += ' e ';
+                  }
+                }
               }
+
+              res({
+                message: 'Objetos com os objectIds ' + stringToMessage + ' foram destruídos'
+              });
+            } else {
+              res({
+                message: 'Objeto com objectId ' + containedIn[0].valueArray[0] + ' foi destruído'
+              });
             }
           }
-
-          res({
-            message: 'Objetos com os objectIds ' + stringToMessage + ' foram destruídos'
-          });
         } else {
           res({
-            message: 'Objeto com objectId ' + containedIn.valueArray[0] + ' foi destruído'
+            message: 'Objeto com objectId ' + containedIn[0].valueArray[0] + ' foi destruído'
           });
         }
       }
@@ -165,7 +173,8 @@ export class CrudService {
     params.where ? where = params.where : where = undefined;
     route = params.route;
 
-    query = new Parse.Query(new Parse.Object(route));
+    const Class = Parse.Object.extend(route);
+    query = new Parse.Query(Class);
 
     if (skip) {
       query.skip(skip);
@@ -180,18 +189,17 @@ export class CrudService {
     }
 
     if (where) {
-      for (let i = 0; i < where.property.length; i++) {
-        query.equalTo(where.property[i], where.value[i]);
+      for (let i = 0; i < where.length; i++) {
+        query.equalTo(where[i].property, where[i].value);
       }
     }
 
     if (containedIn) {
       for (let i = 0; i < containedIn.length; i++) {
-        console.log(containedIn[i].property, containedIn[i].valueArray);
         query.containedIn(containedIn[i].property, containedIn[i].valueArray);
       }
     }
-    console.log(query);
+
     query.find()
     .then(response => {
       if (group) {
@@ -249,13 +257,51 @@ export class CrudService {
         });
       }
 
-      if (!params.where) {
+      if (!params.where && !params.containedIn) {
         res({
           code: 'u-error-03',
-          message: 'Parâmetro obrigatório: where'
+          message: 'Parâmetro obrigatório: where OU containedIn'
+        });
+      }
+
+      if (!params.objectToUpdate) {
+        res({
+          code: 'u-error-04',
+          message: 'Parâmetro obrigatório: objectToUpdate'
         });
       }
     }
+    // Set params errors: end
+    const route = params.route, Class = new Parse.Object.extend(route);
+    let object, objectToUpdate, objectProperties, where;
+
+    objectToUpdate = params.objectToUpdate;
+    objectProperties = Object.keys(objectToUpdate);
+    params.where ? where = params.where : where = undefined;
+
+    object = new Class();
+
+
+    object.set(where.property, where.value);
+
+    for (let i = 0; i < objectProperties.length; i++) {
+      const element = objectProperties[i];
+      object.set(element, objectToUpdate[element]);
+    }
+
+    object.save()
+    .then((resolve) => {
+      // Execute any logic that should take place after the object is saved.
+      res({
+        message: 'Objeto atualizado com objectId ' + resolve.id
+      });
+    }, (error) => {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      rej({
+        message: 'Falha ao atualizar objeto, com o seguinte código de erro: ' + error.message
+      });
+    });
   })
 
   countFromRoute = (params) => new Promise((res, rej) => {

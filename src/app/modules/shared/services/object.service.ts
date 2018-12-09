@@ -10,7 +10,7 @@ export class ObjectService {
       if (object.length && object.length > 0) {
         for (let i = 0; i < object.length; i++) {
           const element = object[i];
-          console.log(element, element[attributeToCheck], attributeToCheck, valueToCheck);
+
           if (element[attributeToCheck] === valueToCheck) {
             resolve({attributeValueExists: true});
           }

@@ -189,7 +189,5 @@ export class FormCreatorComponent implements OnInit {
         this.formCreatorForm.reset();
       });
     });
-
-    console.log(this.objectToCreateForm);
   }
 }

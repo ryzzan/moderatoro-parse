@@ -79,7 +79,7 @@
   <thead>
     <tr>
       <th id="navigation">
-        <div>          
+        <div>
           <mat-form-field *ngIf="params.actionbar.quantity">
             <mat-select placeholder="Quantidade" [(value)]="qtSelected" (selectionChange)="onChangeQuantity($event)">
               <mat-option *ngFor="let qt of [1,2,5,10,20,100,1000]" [value]="qt">

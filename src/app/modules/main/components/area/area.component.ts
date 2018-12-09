@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 
 /**
  * Components
@@ -20,7 +20,8 @@ export class AreaComponent implements OnInit {
     paramsToTableData: any;
     constructor(
         private _crud: CrudService,
-        public _dialog: MatDialog
+        public _dialog: MatDialog,
+        public matsnackbar: MatSnackBar
     ) { }
 
     ngOnInit() {
@@ -28,7 +29,6 @@ export class AreaComponent implements OnInit {
     }
 
     makeList = () => {
-        console.log(25);
         this.paramsToTableData = {
             toolbar: {
                 title: 'Áreas',
@@ -82,19 +82,26 @@ export class AreaComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe(result => {
-                if (result.response) {
+                if (result && result.response) {
                     this.makeList();
                 }
             });
         }
 
         if (e.trigger === 'listEdit') {
-            console.log(e.response);
+            const dialogRef = this._dialog.open(AreaDialogComponent, {
+                width: '95%',
+                data: e.response
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result && result.response) {
+                    this.makeList();
+                }
+            });
         }
 
         if (e.trigger === '_delete') {
-            console.log(e.response);
-
             this._crud
             .delete({
                 route: 'Area',
@@ -103,8 +110,17 @@ export class AreaComponent implements OnInit {
                     valueArray: e.response.arrayToDelete
                 }]
             })
+            .catch(rej => {
+                console.log(rej);
+            })
             .then(res => {
-                console.log(res);
+                this.matsnackbar.open(res['message'], '', {
+                    duration: 3000
+                });
+
+                setTimeout(() => {
+                    this.makeList();
+                }, 1000);
             });
         }
     }

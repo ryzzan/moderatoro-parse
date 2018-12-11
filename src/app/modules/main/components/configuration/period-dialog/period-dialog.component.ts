@@ -17,7 +17,6 @@ import { ValidateDateDMYHMSComparison } from 'src/app/modules/shared/validators/
 export class PeriodDialogComponent implements OnInit {
   array: any;
   competitionId: number;
-  periodDialogForm: FormGroup;
   roles: any;
   title: string;
   userForm: FormGroup;
@@ -27,6 +26,7 @@ export class PeriodDialogComponent implements OnInit {
   submitToUpdate: boolean;
   submitButton: string;
   /*update properties no change end*/
+  periodDialogForm: FormGroup;
 
   constructor(
     private _auth: AuthenticationService,
@@ -38,14 +38,21 @@ export class PeriodDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.periodDialogForm = this.fb.group({
+
+   this.periodDialogForm = this.fb.group({
       'periodGroup': this.fb.group({
         'name': [null, [Validators.maxLength(145), Validators.required]],
-        'startDate': [null, [Validators.required]],
-        'endDate': [null, Validators.required],
+        dates: this.fb.group({
+          'startDate': [null, [Validators.required]],
+          'endDate': [null, Validators.required],
+        }, { validator: ValidateDateDMYHMSComparison(
+          '',
+          '==',
+          'Não são datas iguais'
+        )})
       })
     });
-
+    console.log(this.data);
     /*update start*/
     if (this.data && this.data.id) {
       this.paramToSearch = this.data.id;
@@ -93,23 +100,39 @@ export class PeriodDialogComponent implements OnInit {
         this._auth.handleParseError(err, '');
       });
     } else {
-      this.periodDialogForm = this.fb.group({
-        'periodGroup': this.fb.group({
-          'name': [null, [Validators.maxLength(145), Validators.required]],
-          'startDate': [null, [Validators.required,
-          ValidateDateDMYHMSComparison(
-            this.periodDialogForm.value.periodGroup.endDate,
-            '==',
-            'Não são datas iguais'
-          )]],
-          'endDate': [null, [Validators.required,
-          ValidateDateDMYHMSComparison(
-            this.periodDialogForm.value.periodGroup.startDate,
-            '==',
-            'Não são datas iguais'
-          )]],
-        })
-      });
+      console.log(this.periodDialogForm);
+      // @ts-ignore
+      // this.periodDialogForm.controls.periodGroup.controls.dates.controls.startDate.setValidators(ValidateDateDMYHMSComparison(
+      //             this.periodDialogForm.controls,
+      //             '==',
+      //             'Não são datas iguais'
+      //           ));
+      // this.periodDialogForm = this.fb.group({
+      //   'periodGroup': this.fb.group({
+      //     'name': [null, [Validators.maxLength(145), Validators.required]],
+      //     dates: this.fb.group({
+      //       'startDate': [null, [Validators.required, ValidateDateDMYHMSComparison(
+      //           this.periodDialogForm.controls,
+      //           '==',
+      //           'Não são datas iguais'
+      //         )]],
+      //       'endDate': [null, Validators.required],
+      //     })
+      //     // 'startDate': [null, [Validators.required,
+      //     // ValidateDateDMYHMSComparison(
+      //     //   this.periodDialogForm.controls,
+      //     //   '==',
+      //     //   'Não são datas iguais'
+      //     // )]],
+      //     // 'endDate': [null, [Validators.required,
+      //     // ValidateDateDMYHMSComparison(
+      //     //   this.periodDialogForm.value.periodGroup.startDate,
+      //     //   '==',
+      //     //   'Não são datas iguais'
+      //     // )
+      //   ]],
+      //   })
+      // });
 
       this.submitToCreate = true;
       this.submitToUpdate = false;

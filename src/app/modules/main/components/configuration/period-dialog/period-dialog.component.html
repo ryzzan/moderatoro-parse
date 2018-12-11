@@ -6,14 +6,16 @@
       <mat-form-field>
         <input matInput formControlName="name" placeholder="Nome">
       </mat-form-field>
-
-      <mat-form-field>
-        <input matInput formControlName="startDate" mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="Data do início">
-      </mat-form-field>
       
-      <mat-form-field>
-        <input matInput formControlName="endDate" mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="Data do fim">
-      </mat-form-field>
+      <fieldset formGroupName="dates">
+        <mat-form-field>
+          <input matInput formControlName="startDate" mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="Data do início">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput formControlName="endDate" mask="00/00/0000" [dropSpecialCharacters]="false" placeholder="Data do fim">
+        </mat-form-field>
+      </fieldset>
     </fieldset>
   </form>
 </div>

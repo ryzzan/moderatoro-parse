@@ -2,10 +2,10 @@ import {
   AbstractControl
 } from '@angular/forms';
 
-export function ValidateDateDMYHMSComparison(controlToCompare: AbstractControl, logicProperty: string, errorMessage: string) {
+export function ValidateDateDMYHMSComparison(controlToCompare: any, logicProperty: string, errorMessage: string) {
   let flagFirst = true;
-  console.log(controlToCompare);
   return (control: AbstractControl) => {
+    console.log(control);
     if (controlToCompare && controlToCompare.value) {
       console.log(controlToCompare.value.length);
     }

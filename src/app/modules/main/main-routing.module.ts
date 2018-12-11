@@ -4,7 +4,6 @@ import { Routes, RouterModule } from '@angular/router';
 /**
  * Components
  */
-import { AreaComponent } from './components/area/area.component';
 import { ConfigurationComponent } from './components/configuration/configuration.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { MainComponent } from './main.component';
@@ -28,9 +27,6 @@ const routes: Routes = [{
   }, {
     path: 'configuration',
     component: ConfigurationComponent
-  }, {
-    path: 'area',
-    component: AreaComponent
   }]
 }];
 

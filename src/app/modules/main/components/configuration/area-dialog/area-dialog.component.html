@@ -2,9 +2,11 @@
 
 <div mat-dialog-content>
   <form [formGroup]="areaDialogForm">
-    <mat-form-field>
-      <input matInput formControlName="name" placeholder="Área">
-    </mat-form-field>
+    <fieldset formGroupName="areaGroup">
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Nome">
+      </mat-form-field>
+    </fieldset>
   </form>
 </div>
 

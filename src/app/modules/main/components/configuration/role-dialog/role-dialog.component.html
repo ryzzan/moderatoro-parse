@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>{{title}}</h1>
+
+<div mat-dialog-content>
+  <form [formGroup]="roleDialogForm">
+    <fieldset formGroupName="roleGroup">
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Nome">
+      </mat-form-field>
+
+      <section class="radio-area">
+        <label class="radio-area-title">Permissões</label>
+        <mat-radio-group formControlName="acl">
+          <mat-radio-button value="readOnly">
+            Apenas leitura
+          </mat-radio-button>
+
+          <mat-radio-button value="readAndWrite">
+            Leitura e escrita
+          </mat-radio-button>
+        </mat-radio-group>
+      </section>
+    </fieldset>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-raised-button (click)="onRoleDialogSubmit()" [disabled]="roleDialogForm.invalid">{{this.submitButton}}</button>
+</div>

@@ -1,4 +1,4 @@
-<table *ngIf="!isLoading && params.toolbar" id="toolbar">
+<table *ngIf="!isLoading && params.toolbar && showTable" id="toolbar">
   <thead>
     <tr>
       <th id="title">
@@ -32,7 +32,7 @@
   </thead>  
 </table>
 
-<table *ngIf="!isLoading" id="content">
+<table *ngIf="!isLoading && showTable" id="content">
   <thead *ngIf="columns?.length > 0">
     <tr>
       <th *ngIf="toolbarDelete">
@@ -75,7 +75,7 @@
   </tbody>
 </table>
 
-<table *ngIf="!isLoading && params.actionbar" id="actionbar">
+<table *ngIf="!isLoading && params.actionbar && showTable" id="actionbar">
   <thead>
     <tr>
       <th id="navigation">
@@ -96,3 +96,7 @@
     </tr>
   </thead>  
 </table>
+
+<div *ngIf="!showTable">
+  Não tem permissão para ver esta listagem
+</div>

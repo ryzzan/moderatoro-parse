@@ -4,9 +4,10 @@ import { Router } from '@angular/router';
 
 /*Services*/
 import { CrudService } from './../../services/parse/crud.service';
+import { AuthenticationService } from './../../services/parse/authentication.service';
 
 @Component({
-  selector: 'ntm-delete-confirm',
+  selector: 'app-delete-confirm',
   templateUrl: './delete-confirm.component.html',
   styleUrls: ['./delete-confirm.component.css']
 })
@@ -17,10 +18,11 @@ export class DeleteConfirmComponent implements OnInit {
 
   dataToDelete: any;
   dialogMessage: string;
-  
+
   constructor(
+    private _crud: CrudService,
+    private _auth: AuthenticationService,
     public dialogRef: MatDialogRef<DeleteConfirmComponent>,
-    private crud: CrudService,
     private router: Router,
     private matsnackbar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -28,25 +30,27 @@ export class DeleteConfirmComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(!this.data.dialogMessage) {
-      this.dialogMessage = "Tem certeza que deseja apagar?"
+    if (!this.data.dialogMessage) {
+      this.dialogMessage = 'Tem certeza que deseja apagar?';
     } else {
       this.dialogMessage = this.data.dialogMessage;
     }
   }
-   
+
   delete() {
-    this.crud.delete({route: this.data.routeToApi,paramToDelete: this.data.paramToDelete})
+    this._crud.delete({route: this.data.routeToApi, paramToDelete: this.data.paramToDelete})
     .then(() => {
       this.router.navigate([this.data.routeAfterDelete]);
 
-      let string = this.data.paramToDelete.length + " item(ns) apagado(s)";
+      const string = this.data.paramToDelete.length + ' item(ns) apagado(s)';
 
       this.matsnackbar.open(string, '', {
         duration: 3000
       });
+    }, err => {
+      this._auth.handleParseError(err, '');
     });
-    
+
     this.dialogRef.close(true);
   }
 }

@@ -1,3 +1,40 @@
-<p>
-  configuration works!
-</p>
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Áreas
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-card class="container">
+      <app-table-data [params]="paramsToTableDataArea" (tableDataOutput)="tableDataOutputReceiverArea($event)"></app-table-data>
+    </mat-card>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Perfil
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-card class="container">
+      <app-table-data [params]="paramsToTableDataRole" (tableDataOutput)="tableDataOutputReceiverRole($event)"></app-table-data>
+    </mat-card>
+
+  </mat-expansion-panel>
+
+  <mat-expansion-panel (opened)="panelOpenState = true"
+                       (closed)="panelOpenState = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Ciclo
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-card class="container">
+      <app-table-data [params]="paramsToTableDataPeriod" (tableDataOutput)="tableDataOutputReceiverPeriod($event)"></app-table-data>
+    </mat-card>
+
+  </mat-expansion-panel>
+</mat-accordion>

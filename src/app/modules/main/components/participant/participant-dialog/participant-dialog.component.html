@@ -1,0 +1,45 @@
+<h1 mat-dialog-title>{{title}}</h1>
+
+<div mat-dialog-content>
+  <form [formGroup]="participantDialogForm">
+    <fieldset formGroupName="participantGroup">
+      <mat-form-field>
+        <input matInput formControlName="name" placeholder="Nome">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="cpf" mask = "000.000.000-00" placeholder="CPF">
+      </mat-form-field>
+
+      <mat-form-field>
+        <input matInput formControlName="rg" placeholder="RG">
+      </mat-form-field>
+    </fieldset>
+    
+    <fieldset formGroupName="userGroup">
+      <mat-form-field>
+        <input matInput formControlName="email" placeholder="E-mail">
+      </mat-form-field>
+  
+      <mat-form-field>
+        <input matInput type="password" formControlName="password" placeholder="Senha">
+      </mat-form-field>
+    </fieldset>
+
+    <fieldset formGroupName="participantGroup">
+      <mat-form-field>
+        <input matInput formControlName="mobile" mask = "(00) 00000-0000" placeholder="Telefone">
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-select formControlName="role" placeholder="Perfil">
+          <mat-option *ngFor="let role of roles" [value]="role.idObject"> {{option.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </fieldset>
+  </form>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-raised-button (click)="onParticipantDialogSubmit()" [disabled]="participantDialogForm.invalid">{{this.submitButton}}</button>
+</div>

@@ -1,12 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { MatSnackBar, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { ActivatedRoute, Router } from '@angular/router';
 
 /**
  * Services
  */
 import { CrudService } from './../../../../shared/services/parse/crud.service';
+import { AuthenticationService } from './../../../../shared/services/parse/authentication.service';
 
 @Component({
   selector: 'app-area-dialog',
@@ -17,8 +17,9 @@ export class AreaDialogComponent implements OnInit {
   array: any;
   competitionId: number;
   areaDialogForm: FormGroup;
-  paramsToTableData: any;
+  roles: any;
   title: string;
+  userForm: FormGroup;
   /*update properties no change start*/
   paramToSearch: any;
   submitToCreate: boolean;
@@ -27,28 +28,30 @@ export class AreaDialogComponent implements OnInit {
   /*update properties no change end*/
 
   constructor(
-    private route: ActivatedRoute,
-    private crud: CrudService,
+    private _auth: AuthenticationService,
+    private _crud: CrudService,
     private matsnackbar: MatSnackBar,
-    private router: Router,
     public dialogRef: MatDialogRef<AreaDialogComponent>,
+    private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) { }
 
   ngOnInit() {
-    this.areaDialogForm = new FormGroup({
-      'name': new FormControl(null, [Validators.maxLength(145), Validators.required])
+    this.areaDialogForm = this.fb.group({
+      'areaGroup': this.fb.group({
+        'name': [null, [Validators.maxLength(145), Validators.required]]
+      })
     });
-    /*update start*/
 
+    /*update start*/
     if (this.data && this.data.id) {
       this.paramToSearch = this.data.id;
       this.submitToCreate = false;
       this.submitToUpdate = true;
-      this.title = 'Alterar Área';
+      this.title = 'Alterar área';
       this.submitButton = 'Atualizar';
 
-      this.crud.readFromRoute({
+      this._crud.readFromRoute({
         route: 'Area',
         order: ['objectId', 'desc'],
         where: [{
@@ -58,12 +61,18 @@ export class AreaDialogComponent implements OnInit {
       }).then(res => {
         const obj = res['response'][0]['attributes'];
 
-        this.areaDialogForm.get('name').setValue(obj.name);
+        this.areaDialogForm.patchValue({
+          areaGroup: {
+            name: obj.name
+          }
+        });
+      }, err => {
+        this._auth.handleParseError(err, '');
       });
     } else {
       this.submitToCreate = true;
       this.submitToUpdate = false;
-      this.title = 'Cadastrar Área';
+      this.title = 'Cadastrar área';
       this.submitButton = 'Salvar';
     }
     /*update end*/
@@ -73,16 +82,15 @@ export class AreaDialogComponent implements OnInit {
     if (this.submitToUpdate) {
       const params = {
         route: 'Area',
-        objectToUpdate: this.areaDialogForm.value,
+        objectToUpdate: this.areaDialogForm.value.areaGroup,
         where: {
           property: 'objectId',
           value: this.data.id
         }
       };
 
-      this.crud.update(params)
+      this._crud.update(params)
         .then(res => {
-          console.log(res);
           this.matsnackbar.open(res['message'], '', {
             duration: 2000
           });
@@ -91,18 +99,15 @@ export class AreaDialogComponent implements OnInit {
             response: 'updated',
             message: 'AreaDialogForm was updated'
           });
-        }, rej => {
-          this.matsnackbar.open(rej['message'], '', {
-            duration: 3000
-          });
+        }, err => {
+          this._auth.handleParseError(err, '');
         });
     } else {
-      const params = {
+      const paramsToArea = {
         route: 'Area',
-        objectToCreate: this.areaDialogForm.value
+        objectToCreate: this.areaDialogForm.value.areaGroup
       };
-
-      this.crud.create(params)
+      this._crud.create(paramsToArea)
         .then(res => {
           this.matsnackbar.open(res['message'], '', {
             duration: 2000
@@ -112,10 +117,8 @@ export class AreaDialogComponent implements OnInit {
             response: 'created',
             message: 'AreaDialogForm created new data'
           });
-        }, rej => {
-          this.matsnackbar.open(rej['message'], '', {
-            duration: 3000
-          });
+        }, err => {
+          this._auth.handleParseError(err, '');
         });
     }
   }

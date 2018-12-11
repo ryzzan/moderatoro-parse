@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatSnackBar } from '@angular/material';
 /**
  * Services
  */
+import { AuthenticationService } from './../../services/parse/authentication.service';
 import { CrudService } from '../../services/parse/crud.service';
 import { ObjectService } from '../../services/object.service';
 import { StringService } from '../../services/string.service';
@@ -24,6 +25,7 @@ export class FormCreatorComponent implements OnInit {
   valid: Boolean;
 
   constructor(
+    private _auth: AuthenticationService,
     public _crud: CrudService,
     private _object: ObjectService,
     private _string: StringService,
@@ -100,9 +102,6 @@ export class FormCreatorComponent implements OnInit {
       this._crud.readFromRoute({
         route: options[0]
       })
-      .catch(rej => {
-        console.log(rej);
-      })
       .then(res => {
         for (let i = 0; i < res['response'].length; i++) {
           const element = res['response'][i]['attributes'][options[1]];
@@ -114,6 +113,8 @@ export class FormCreatorComponent implements OnInit {
         this.formCreatorForm.get('optionsByParse').patchValue(null);
 
         resolve(optionsArray);
+      }, err => {
+        this._auth.handleParseError(err, '');
       });
     } else {
       if (this.options.values.length > 0) {

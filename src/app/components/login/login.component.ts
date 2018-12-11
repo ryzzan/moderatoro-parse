@@ -1,4 +1,3 @@
-import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
@@ -21,7 +20,6 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private _auth: AuthenticationService,
-    private _router: Router,
     public _snackbar: MatSnackBar
   ) { }
 
@@ -34,9 +32,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onLoginSubmit = () => { 
+  onLoginSubmit = () => {
     this.disabled = true;
-    let params = {
+    const params = {
       user: this.loginForm.get('user').value,
       password: this.loginForm.get('password').value,
       loginMode: 'emailAndPassword',
@@ -48,11 +46,11 @@ export class LoginComponent implements OnInit {
     .then(res => {
       setTimeout(() => {
         this.disabled = false;
-      }, 3000)
+      }, 3000);
     }).catch( rej => {
       setTimeout(() => {
         this.disabled = false;
-      }, 3000)
+      }, 3000);
     });
   }
 }

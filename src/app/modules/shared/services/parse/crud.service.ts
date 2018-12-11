@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
  * Services
  */
 import { ArrayService } from '../array.service';
+import { AuthenticationService } from './authentication.service';
 
 /**
  * Third party
@@ -17,6 +18,7 @@ import { Parse } from 'parse';
 })
 export class CrudService {
   constructor(
+    private _auth: AuthenticationService,
     private _array: ArrayService
   ) {
     Parse.initialize('qPZfPQPQGttsCpugKLR1j6BNqlLJ1G2WTIEqKH9H', 'wKafb4TZ5Pj0Gw8BMvNyfDdGW5U8S0jaRsGvx5C7');
@@ -69,6 +71,54 @@ export class CrudService {
       // error is a Parse.Error with an error code and message.
       rej({
         message: 'Falha ao criar objeto, com o seguinte código de erro: ' + error.message
+      });
+    });
+  })
+
+  createRole = (params)  => new Promise((res, rej) => {
+    // Set params errors: start
+    if (!params) {
+      res({
+        code: 'cr-error-01',
+        message: 'Defina parâmetros mínimos'
+      });
+    } else {
+      if (!params.objectToRole) {
+        res({
+          code: 'cr-error-02',
+          message: 'Parâmetro obrigatório: objectToRole'
+        });
+      }
+    }
+    // Set params errors: end
+    let role, roleACL, objectToRole;
+    objectToRole = params.objectToRole;
+
+    roleACL = new Parse.ACL();
+
+    if (objectToRole.acl === 'readOnly') {
+      roleACL.setRoleReadAccess(objectToRole.name, true);
+      roleACL.setRoleWriteAccess(objectToRole.name, false);
+    }
+
+    if (objectToRole.acl === 'readAndWrite') {
+      roleACL.setRoleReadAccess(objectToRole.name, true);
+      roleACL.setRoleWriteAccess(objectToRole.name, true);
+    }
+
+    role = new Parse.Role(objectToRole.name, roleACL);
+
+    role.save()
+    .then((resolve) => {
+      // Execute any logic that should take place after the object is saved.
+      res({
+        message: 'Novo perfil criado com objectId ' + resolve.id
+      });
+    }, (error) => {
+      // Execute any logic that should take place if the save fails.
+      // error is a Parse.Error with an error code and message.
+      rej({
+        message: 'Falha ao criar perfil, com o seguinte código de erro: ' + error.message
       });
     });
   })
@@ -201,6 +251,9 @@ export class CrudService {
     }
 
     query.find()
+    .catch(reject => {
+      this._auth.handleParseError(reject, '');
+    })
     .then(response => {
       if (group) {
         this._array.sortArrayOfObjectsByAttributeValue(response, group);
@@ -237,6 +290,11 @@ export class CrudService {
           response: response
         });
       }
+    }, err => {
+      res({
+        message: err.message,
+        response: err
+      });
     });
   })
 

@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter, Inject, OnChanges } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA, MatSnackBar } from '@angular/material';
-import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
 
 /**
  * Services
  */
 import { ArrayService } from '../../services/array.service';
+import { AuthenticationService } from './../../services/parse/authentication.service';
 import { CrudService } from '../../services/parse/crud.service';
 import { SearchDialogComponent } from '../search-dialog/search-dialog.component';
 
@@ -34,19 +34,21 @@ export class TableDataComponent implements OnChanges {
   search: any;
   searchResponse: any;
   searchString: string;
+  showTable = true;
   title = '';
   toolbarActionButton = false;
   toolbarDelete = false;
   total: number;
 
   constructor(
+    private _auth: AuthenticationService,
     private _array: ArrayService,
     private _crud: CrudService,
     private _dialog: MatDialog
   ) {
   }
 
-  ngOnChanges() { console.log(53);
+  ngOnChanges() {
     this.isLoading = true;
     this.params.list ? this.setListStructure() : this.setErrors('params.list is required');
   }
@@ -119,7 +121,12 @@ export class TableDataComponent implements OnChanges {
       match: search,
       group: group,
       order: order
-    }).then(res => {
+    })
+    .then(res => {
+      if (!res['response']) {
+        this.showTable = false;
+        return false;
+      }
       this.isLoading = false;
 
       for (let lim = this.params['list']['columns'].length, i = 0; i < lim; i++) {
@@ -145,10 +152,14 @@ export class TableDataComponent implements OnChanges {
           this.total = resolve['response'];
           this.checkPagination();
           this.setListStructure();
+        }, err => {
+          this._auth.handleParseError(err, '');
         });
       }
 
       this.setUncheckAllToDelete();
+    }, err => {
+      this._auth.handleParseError(err, '');
     });
   }
 

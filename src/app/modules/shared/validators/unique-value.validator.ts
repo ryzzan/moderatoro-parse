@@ -28,6 +28,8 @@ export function ValidateUniqueValue(valueToIgnoreIfUpdate: string, collectionAnd
                         });
                     }
                 }
+            }, err => {
+                this._auth.handleParseError(err, '');
             });
         }, 500);
         return null;

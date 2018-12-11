@@ -30,15 +30,15 @@ export class MainComponent implements OnInit {
     link: ['dashboard']
   }, {
     name: 'Participantes',
-    icon: 'account_circle',
+    icon: 'people',
     link: ['participant']
   }, {
-    name: 'Occupações',
-    icon: 'toys',
+    name: 'Ocupações',
+    icon: 'build',
     link: 'occupation'
   }, {
     name: 'Configurações',
-    icon: 'toys',
+    icon: 'settings',
     link: 'configuration'
   }];
 

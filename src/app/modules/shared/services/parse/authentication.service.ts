@@ -12,7 +12,7 @@ export class AuthenticationService {
     private _snackbar: MatSnackBar,
     private _router: Router
   ) {
-    Parse.initialize('thcu7IuHJHPDH8n0SqG2m6wRRLUA7pGyAHFLVkzs', 'IYLVaGn4u809YBJO0y6dAirCQIPrUCzOQRq8TweO');
+    Parse.initialize('qPZfPQPQGttsCpugKLR1j6BNqlLJ1G2WTIEqKH9H', 'wKafb4TZ5Pj0Gw8BMvNyfDdGW5U8S0jaRsGvx5C7');
     Parse.serverURL = 'https://parseapi.back4app.com/';
   }
 
@@ -100,13 +100,25 @@ export class AuthenticationService {
         });
       }
 
-      Parse.User.logOut();
-
-      this._router.navigate([params.navigateTo]);
+      Parse.User.logOut()
+      .then(() => {
+        this._router.navigate([params.navigateTo]);
+        location.reload();
+      });
     }
   })
 
   getUser = () => {
     return Parse.User.current();
+  }
+
+  handleParseError = (err, navigateTo) => {
+    console.log(err);
+    switch (err.code) {
+      case 209:
+        Parse.User.logOut();
+        this._router.navigate([navigateTo]);
+      break;
+    }
   }
 }
